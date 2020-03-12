@@ -47,7 +47,9 @@ class Register extends Component {
         attributes: {
           gender: "M",
           email: email,
-          zoneinfo: "2990"
+          zoneinfo: "2990",
+          address: "adresse 1",
+          name: "kunde1"
         }
       });
       this.props.history.push("/welcome");

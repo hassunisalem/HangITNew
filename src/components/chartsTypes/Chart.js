@@ -1,13 +1,18 @@
 import React, { Component } from "react";
 import datas from "../DummyData.json";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { Auth } from "aws-amplify";
 
 import ChartLine from "./ChartLine";
 
-var URL =
-  "https://81q1ezd0sf.execute-api.eu-central-1.amazonaws.com/dev/retrieve-deliver-test-open?gender=M&customerId=234&venueId=215&wardrobeId=145&type=all&startTimeStamp=2019-07-22%2014:15:22&endTimeStamp=2019-07-2216:15:22&zipCodeStart=2200&zipCodeEnd=2400&bin=12h";
 class Chart extends Component {
   state = {
+    datoFra: "",
+    datoTil: "",
+    alderFra: "",
+    alderTil: "",
+    gender: "",
+
     pieData: {
       labels: ["Mænd", "Kvinder"],
       datasets: [
@@ -139,29 +144,53 @@ class Chart extends Component {
       ]
     }
   };
-  /*
-  componentDidMount() {
-    fetch(URL)
-      .then(response => response.json())
-      .then(repos => {
-        console.log(repos.body.data);
-        this.setState({
-          testData: {
-            labels: repos.body.data.x,
-            datasets: [
-              {
-                data: repos.body.data.y,
-                label: "Antal Oprettet",
-                backgroundColor: "rgba(0, 255, 0, 0.3)"
-              }
-            ]
-          }
-        });
 
-        console.log(this.state.testData);
-      });
-  }
-*/
+  handleSubmit = async event => {
+    event.preventDefault();
+
+    console.log(this.state.datoFra);
+    console.log(this.state.datoTil);
+    console.log(this.state.alderFra);
+    console.log(this.state.alderTil);
+  };
+
+  /*
+    var URL = "https://takntsw7f2.execute-api.eu-central-1.amazonaws.com/dev"; // "customerId = " + customerId + "&venueId= " + venueId + "&venueId= " + venueId;
+       fetch(URL)
+         .then(response => response.json())
+         .then(repos => {
+           console.log(repos.body.data);
+           this.setState({
+             testData: {
+               labels: repos.body.data.x,
+               datasets: [
+                 {
+                   data: repos.body.data.y,
+                   label: "Antal Oprettet",
+                   backgroundColor: "rgba(0, 255, 0, 0.3)"
+                 }
+               ]
+             }
+           });
+   
+           console.log(this.state.testData);
+         });
+     }}
+  var customerId="dallevall@hotmail.com"
+  var venueId="23"
+  var action="retrieval"
+  var startTimeStamp="2020-01-30 21:27:00"
+  var endTimeStamp="2020-01-30 22:27:00"
+  var age="20-28"
+  var gender="M"
+  var zipcode="2600-3000" 
+
+  efter backend er opdateret:
+  var wardropeId="1234" 
+
+
+  
+   */
   sortAgeMale() {
     var aldersGruppe = [];
     var fra = 15;
@@ -253,6 +282,13 @@ class Chart extends Component {
     location: "City"
   };
 
+  onInputChange = event => {
+    this.setState({
+      [event.target.id]: event.target.value
+    });
+    document.getElementById(event.target.id).classList.remove("is-danger");
+  };
+
   render() {
     var circleStyle = {
       position: "absolute",
@@ -281,6 +317,83 @@ class Chart extends Component {
           className="aldersfordeling chart"
           style={{ textAlign: "left", height: 300, width: 650 }}
         >
+          <form onSubmit={this.handleSubmit}>
+            <div className="field">
+              <p className="control">
+                fra
+                <input
+                  className="input"
+                  type="text"
+                  id="datoFra"
+                  placeholder="YYY-MM-DD hh:mm:ss"
+                  value={this.state.datoFra}
+                  onChange={this.onInputChange}
+                />
+              </p>
+            </div>
+            <div className="field">
+              <p className="control">
+                til
+                <input
+                  className="input"
+                  type="text"
+                  id="datoTil"
+                  placeholder="YYY-MM-DD hh:mm:ss"
+                  value={this.state.datoTil}
+                  onChange={this.onInputChange}
+                />
+              </p>
+            </div>
+
+            <div className="field">
+              <p className="control">
+                fra
+                <input
+                  className="input"
+                  type="text"
+                  id="alderFra"
+                  placeholder="Alder"
+                  value={this.state.alderFra}
+                  onChange={this.onInputChange}
+                />
+              </p>
+            </div>
+
+            <div className="field">
+              <p className="control">
+                til
+                <input
+                  className="input"
+                  type="text"
+                  id="alderTil"
+                  placeholder="Alder"
+                  value={this.state.alderTil}
+                  onChange={this.onInputChange}
+                />
+              </p>
+            </div>
+
+            <div className="field">
+              <p className="control">
+                <input
+                  className="input"
+                  type="text"
+                  id="køn"
+                  placeholder="køn (M eller F)"
+                  value={this.state.alderTil}
+                  onChange={this.onInputChange}
+                />
+              </p>
+            </div>
+
+            <div className="field">
+              <p className="control">
+                <button className="button is-success">Hent Data</button>
+              </p>
+            </div>
+          </form>
+
+          <br></br>
           <Bar
             data={this.state.chartData}
             options={{
@@ -350,9 +463,6 @@ class Chart extends Component {
           </div>
         </div>
 
-        <ChartLine data={this.state.userData} />
-        <ChartLine data={this.state.testData} />
-        <button> lel</button>
         <div
           style={{
             position: "absolute",

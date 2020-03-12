@@ -38,7 +38,7 @@ class App extends Component {
     try {
       const session = await Auth.currentSession();
       this.setAuthStatus(true);
-      console.log(session.getAccessToken().getJwtToken());
+      console.log((await Auth.currentSession()).getIdToken().getJwtToken());
       const user = await Auth.currentAuthenticatedUser();
       this.setUser(user);
     } catch (error) {

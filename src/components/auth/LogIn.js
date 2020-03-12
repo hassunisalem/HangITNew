@@ -45,7 +45,7 @@ class LogIn extends Component {
       this.props.auth.setAuthStatus(true);
       this.props.auth.setUser(user);
       this.props.history.push("/");
-      console.log((await Auth.currentSession()).getIdToken);
+      console.log("idToken:"(await Auth.currentSession()).getIdToken());
     } catch (error) {
       let err = null;
       !error.message ? (err = { message: error }) : (err = error);
@@ -60,6 +60,7 @@ class LogIn extends Component {
 
   async componentDidMount() {
     try {
+      console.log("idToken:"(await Auth.currentSession()).getIdToken());
       const session = await Auth.currentSession();
       this.setAuthStatus(true);
       console.log(session);
