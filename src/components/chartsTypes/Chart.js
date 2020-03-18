@@ -7,11 +7,11 @@ import ChartLine from "./ChartLine";
 
 class Chart extends Component {
   state = {
-    datoFra: "",
-    datoTil: "",
-    alderFra: "",
-    alderTil: "",
-    gender: "",
+    datoFra: "2020-01-1%2022:23:00",
+    datoTil: "2021-10-1%2023:23:00",
+    alderFra: "6",
+    alderTil: "100",
+    gender: "M",
 
     pieData: {
       labels: ["Mænd", "Kvinder"],
@@ -107,43 +107,78 @@ class Chart extends Component {
     fetchDatay: {},
 
     testData: {
-      labels: [
-        "Januar",
-        "Febuar",
-        "Marts",
-        "April",
-        "Maj",
-        "Juni",
-        "Juli",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-      ],
+      labels: [],
 
       datasets: [
         {
           label: "Antal Oprettet",
           backgroundColor: "rgba(0, 255, 0, 0.3)",
-          data: [
-            this.getRegistration("01"),
-            this.getRegistration("02"),
-            this.getRegistration("03"),
-            this.getRegistration("04"),
-            this.getRegistration("05"),
-            this.getRegistration("06"),
-            this.getRegistration("07"),
-            this.getRegistration("08"),
-            this.getRegistration("09"),
-            this.getRegistration("10"),
-            this.getRegistration("11"),
-            this.getRegistration("12")
-          ]
+          data: []
         }
       ]
     }
   };
+
+  componentDidMount() {
+    var datoFra = this.state.datoFra;
+    var datoTil = this.state.datoTil;
+    var alderFra = this.state.alderFra;
+    var alderTil = this.state.alderTil;
+    var gender = this.state.gender;
+
+    this.fetchUserData(datoFra, datoTil, alderFra, alderTil, gender);
+  }
+
+  // 2020-01-1%2022:23:00
+  // 2021-10-1%2023:23:00
+
+  /* var URL =
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/test?customerId=Customer0&venueId=1&timeStampStart=" +
+      this.state.datoFra +
+      "&timeStampEnd= " +
+      this.state.datoTil +
+      "&action=delivery&ageEnd=" +
+      this.state.alderTil +
+      "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
+      this.state.gender +
+      "&ageStart=" +
+      this.state.alderFra;
+ */
+
+  fetchUserData(datoFra, datoTil, alderFra, alderTil, gender) {
+    var URL =
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/test?customerId=Customer0&venueId=1&timeStampStart=" +
+      datoFra +
+      "&timeStampEnd=" +
+      datoTil +
+      "&action=delivery&ageEnd=" +
+      alderTil +
+      "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
+      gender +
+      "&ageStart=" +
+      alderFra;
+
+    console.log(URL);
+
+    fetch(URL)
+      .then(response => response.json())
+      .then(repos => {
+        this.setState({
+          testData: {
+            labels: repos.x,
+            datasets: [
+              {
+                data: repos.y,
+                label: "Antal Oprettet",
+                backgroundColor: "rgba(0, 255, 0, 0.3)"
+              }
+            ]
+          }
+        });
+
+        console.log(this.state.testData);
+      });
+  }
 
   handleSubmit = async event => {
     event.preventDefault();
@@ -152,30 +187,20 @@ class Chart extends Component {
     console.log(this.state.datoTil);
     console.log(this.state.alderFra);
     console.log(this.state.alderTil);
+    console.log(this.state.gender);
+
+    var datoFra = this.state.datoFra;
+    var datoTil = this.state.datoTil;
+    var alderFra = this.state.alderFra;
+    var alderTil = this.state.alderTil;
+    var gender = this.state.gender;
+
+    this.fetchUserData(datoFra, datoTil, alderFra, alderTil, gender);
   };
+  // "customerId = " + customerId + "&venueId= " + venueId + "&venueId= " + venueId;
 
   /*
-    var URL = "https://takntsw7f2.execute-api.eu-central-1.amazonaws.com/dev"; // "customerId = " + customerId + "&venueId= " + venueId + "&venueId= " + venueId;
-       fetch(URL)
-         .then(response => response.json())
-         .then(repos => {
-           console.log(repos.body.data);
-           this.setState({
-             testData: {
-               labels: repos.body.data.x,
-               datasets: [
-                 {
-                   data: repos.body.data.y,
-                   label: "Antal Oprettet",
-                   backgroundColor: "rgba(0, 255, 0, 0.3)"
-                 }
-               ]
-             }
-           });
    
-           console.log(this.state.testData);
-         });
-     }}
   var customerId="dallevall@hotmail.com"
   var venueId="23"
   var action="retrieval"
@@ -378,9 +403,9 @@ class Chart extends Component {
                 <input
                   className="input"
                   type="text"
-                  id="køn"
+                  id="gender"
                   placeholder="køn (M eller F)"
-                  value={this.state.alderTil}
+                  value={this.state.gender}
                   onChange={this.onInputChange}
                 />
               </p>
@@ -395,7 +420,7 @@ class Chart extends Component {
 
           <br></br>
           <Bar
-            data={this.state.chartData}
+            data={this.state.testData}
             options={{
               title: {
                 display: this.props.displayTitle,
