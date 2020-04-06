@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import datas from "../DummyData.json";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
-import { Auth } from "aws-amplify";
 
 import ChartLine from "./ChartLine";
 
@@ -103,8 +102,6 @@ class Chart extends Component {
         }
       ]
     },
-    fetchDatax: {},
-    fetchDatay: {},
 
     testData: {
       labels: [],
@@ -146,8 +143,14 @@ class Chart extends Component {
  */
 
   fetchUserData(datoFra, datoTil, alderFra, alderTil, gender) {
+    var durationOfStay =
+      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/test";
+
+    var retDel =
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/test";
+
     var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/test?customerId=Customer0&venueId=1&timeStampStart=" +
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer0&venueId=1&timeStampStart=" +
       datoFra +
       "&timeStampEnd=" +
       datoTil +
@@ -160,7 +163,13 @@ class Chart extends Component {
 
     console.log(URL);
 
-    fetch(URL)
+    fetch(URL, {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "http://localhost:3000/chart"
+      },
+      mode: "cors"
+    })
       .then(response => response.json())
       .then(repos => {
         this.setState({
@@ -182,12 +191,6 @@ class Chart extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
-
-    console.log(this.state.datoFra);
-    console.log(this.state.datoTil);
-    console.log(this.state.alderFra);
-    console.log(this.state.alderTil);
-    console.log(this.state.gender);
 
     var datoFra = this.state.datoFra;
     var datoTil = this.state.datoTil;
@@ -400,6 +403,7 @@ class Chart extends Component {
 
             <div className="field">
               <p className="control">
+                Gender
                 <input
                   className="input"
                   type="text"
