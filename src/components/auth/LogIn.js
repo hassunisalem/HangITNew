@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import FormErrors from "../FormErrors";
 import Validate from "../utility/FormValidation";
 import { Auth } from "aws-amplify";
+import store from "../../store";
+import * as ActionConstructer from "../../actions/ActionConstructer";
 
 class LogIn extends Component {
   state = {
@@ -12,58 +14,54 @@ class LogIn extends Component {
     password: "",
     errors: {
       cognito: null,
-      blankfield: false
-    }
+      blankfield: false,
+    },
   };
 
   clearErrorState = () => {
     this.setState({
       errors: {
         cognito: null,
-        blankfield: false
-      }
+        blankfield: false,
+      },
     });
   };
 
-  handleSubmit = async event => {
+  handleSubmit = async (event) => {
     event.preventDefault();
 
     // Form validation
     this.clearErrorState();
     const error = Validate(event, this.state);
+    store.dispatch(ActionConstructer.setIsLogged(true));
     if (error) {
       this.setState({
-        errors: { ...this.state.errors, ...error }
+        errors: { ...this.state.errors, ...error },
       });
     }
 
     // AWS Cognito integration here
     try {
       const user = await Auth.signIn(this.state.username, this.state.password);
-      console.log(user);
 
       this.props.auth.setAuthStatus(true);
       this.props.auth.setUser(user);
       this.props.history.push("/");
-      console.log("idToken:"(await Auth.currentSession()).getIdToken());
     } catch (error) {
       let err = null;
       !error.message ? (err = { message: error }) : (err = error);
       this.setState({
         errors: {
           ...this.state.errors,
-          cognito: err
-        }
+          cognito: err,
+        },
       });
     }
   };
 
   async componentDidMount() {
     try {
-      console.log("idToken:"(await Auth.currentSession()).getIdToken());
-      const session = await Auth.currentSession();
       this.setAuthStatus(true);
-      console.log(session);
       const user = await Auth.currentAuthenticatedUser();
       this.setUser(user);
     } catch (error) {
@@ -75,9 +73,9 @@ class LogIn extends Component {
     this.setState({ isAuthenticating: false });
   }
 
-  onInputChange = event => {
+  onInputChange = (event) => {
     this.setState({
-      [event.target.id]: event.target.value
+      [event.target.id]: event.target.value,
     });
     document.getElementById(event.target.id).classList.remove("is-danger");
   };

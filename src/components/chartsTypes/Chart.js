@@ -1,107 +1,34 @@
 import React, { Component } from "react";
 import datas from "../DummyData.json";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
+import store from "../../store";
+
+import { Auth } from "aws-amplify";
+
+import * as ActionConstructer from "../../actions/ActionConstructer";
+import ReactCSSTransitionGroup from "react-addons-css-transition-group";
+import {
+  Col,
+  Card,
+  CardBody,
+  CardTitle,
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  FormText,
+} from "reactstrap";
 
 import ChartLine from "./ChartLine";
 
 class Chart extends Component {
   state = {
-    datoFra: "2020-01-1%2022:23:00",
-    datoTil: "2021-10-1%2023:23:00",
-    alderFra: "6",
+    datoFra: "2020-05-11%2015:16:00",
+    datoTil: "2020-10-14%2022:09:00",
+    alderFra: "1",
     alderTil: "100",
-    gender: "M",
-
-    pieData: {
-      labels: ["Mænd", "Kvinder"],
-      datasets: [
-        {
-          label: "Antal Mænd",
-          backgroundColor: [
-            "rgba(54, 162, 235, 0.6)",
-            "rgba(255, 99, 132, 0.6)"
-          ],
-          data: [this.getGenderMale(), this.getGenderFemale()]
-        }
-      ]
-    },
-    userData: {
-      labels: [
-        "Januar",
-        "Febuar",
-        "Marts",
-        "April",
-        "Maj",
-        "Juni",
-        "Juli",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-      ],
-
-      datasets: [
-        {
-          label: "Antal Oprettet",
-          backgroundColor: "rgba(0, 255, 0, 0.3)",
-          data: [
-            this.getRegistration("01"),
-            this.getRegistration("02"),
-            this.getRegistration("03"),
-            this.getRegistration("04"),
-            this.getRegistration("05"),
-            this.getRegistration("06"),
-            this.getRegistration("07"),
-            this.getRegistration("08"),
-            this.getRegistration("09"),
-            this.getRegistration("10"),
-            this.getRegistration("11"),
-            this.getRegistration("12")
-          ]
-        }
-      ]
-    },
-    chartData: {
-      labels: [
-        "15 - 16",
-        "17 - 18",
-        "19 - 20",
-        "21 - 22",
-        "23 - 24",
-        "25 - 26",
-        "27 - 28",
-        "29 - 30",
-        "31 - 32",
-        "33 - 34",
-        "35 - 36",
-        "37 - 38",
-        "39 - 40",
-        "41 - 42",
-        "43 - 44",
-        "45 - 46",
-        "47 - 48",
-        "49 - 50",
-        "51 - 52",
-        "53 - 54",
-        "55 - 56",
-        "57 - 58",
-        "59 - 60",
-        "60+"
-      ],
-      datasets: [
-        {
-          label: "Antal Mænd",
-          backgroundColor: "rgba(54, 162, 235, 0.6)",
-          data: this.sortAgeMale()
-        },
-        {
-          label: "Antal Kvinder",
-          backgroundColor: "rgba(255, 99, 132, 0.6)",
-          data: this.sortAgeFemale()
-        }
-      ]
-    },
+    gender: "NULL",
 
     testData: {
       labels: [],
@@ -110,13 +37,39 @@ class Chart extends Component {
         {
           label: "Antal Oprettet",
           backgroundColor: "rgba(0, 255, 0, 0.3)",
-          data: []
-        }
-      ]
-    }
+          data: [],
+        },
+      ],
+    },
+    exampleData: {
+      labels: ["January", "February", "March", "April", "May", "June", "July"],
+      datasets: [
+        {
+          label: "My First dataset",
+          fill: false,
+          lineTension: 0.1,
+          backgroundColor: "rgba(75,192,192,0.4)",
+          borderColor: "rgba(75,192,192,1)",
+          borderCapStyle: "round",
+          borderDash: [],
+          borderDashOffset: 0.0,
+          borderJoinStyle: "miter",
+          pointBorderColor: "rgba(75,192,192,1)",
+          pointBackgroundColor: "#fff",
+          pointBorderWidth: 1,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: "rgba(75,192,192,1)",
+          pointHoverBorderColor: "rgba(220,220,220,1)",
+          pointHoverBorderWidth: 2,
+          pointRadius: 1,
+          pointHitRadius: 10,
+          data: [65, 59, 80, 81, 56, 55, 40],
+        },
+      ],
+    },
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     var datoFra = this.state.datoFra;
     var datoTil = this.state.datoTil;
     var alderFra = this.state.alderFra;
@@ -124,6 +77,12 @@ class Chart extends Component {
     var gender = this.state.gender;
 
     this.fetchUserData(datoFra, datoTil, alderFra, alderTil, gender);
+
+    store.dispatch(
+      ActionConstructer.setIdToken(
+        (await Auth.currentSession()).getIdToken().getJwtToken()
+      )
+    );
   }
 
   // 2020-01-1%2022:23:00
@@ -144,17 +103,23 @@ class Chart extends Component {
 
   fetchUserData(datoFra, datoTil, alderFra, alderTil, gender) {
     var durationOfStay =
-      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/test";
+      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?";
 
     var retDel =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/test";
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&";
+
+    var patronUsers =
+      "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?";
+
+    var getDistrbution =
+      "https://k7mb52gfg0.execute-api.eu-central-1.amazonaws.com/dev?";
 
     var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer0&venueId=1&timeStampStart=" +
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer0&venueId=1&timeStampStart=" +
       datoFra +
       "&timeStampEnd=" +
       datoTil +
-      "&action=delivery&ageEnd=" +
+      "&ageEnd=" +
       alderTil +
       "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
       gender +
@@ -163,15 +128,19 @@ class Chart extends Component {
 
     console.log(URL);
 
+    console.log(store.getState());
+    // headers skal passes videre som props, efter man er logget ind
+
     fetch(URL, {
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "http://localhost:3000/chart"
+        "Access-Control-Allow-Origin": "http://localhost:3000/chart",
+        Authorization: store.getState(),
       },
-      mode: "cors"
+      mode: "cors",
     })
-      .then(response => response.json())
-      .then(repos => {
+      .then((response) => response.json())
+      .then((repos) => {
         this.setState({
           testData: {
             labels: repos.x,
@@ -179,17 +148,17 @@ class Chart extends Component {
               {
                 data: repos.y,
                 label: "Antal Oprettet",
-                backgroundColor: "rgba(0, 255, 0, 0.3)"
-              }
-            ]
-          }
+                backgroundColor: "rgba(0, 255, 0, 0.3)",
+              },
+            ],
+          },
         });
 
         console.log(this.state.testData);
       });
   }
 
-  handleSubmit = async event => {
+  handleSubmit = async (event) => {
     event.preventDefault();
 
     var datoFra = this.state.datoFra;
@@ -245,7 +214,7 @@ class Chart extends Component {
 
   getAgeMale(age1, age2) {
     var count = [];
-    datas.map(person => {
+    datas.map((person) => {
       if (
         age1 <= person.age &&
         person.age <= age2 &&
@@ -260,7 +229,7 @@ class Chart extends Component {
 
   getAgeFemale(age1, age2) {
     var count = [];
-    datas.map(person => {
+    datas.map((person) => {
       if (
         age1 <= person.age &&
         person.age <= age2 &&
@@ -275,7 +244,7 @@ class Chart extends Component {
 
   getGenderMale() {
     var list = [];
-    datas.map(person => {
+    datas.map((person) => {
       if (person.gender === "male") {
         list.push(person);
       }
@@ -284,7 +253,7 @@ class Chart extends Component {
   }
   getRegistration(month) {
     var count = [];
-    datas.map(person => {
+    datas.map((person) => {
       if (month === person.registered.substring(5, 7)) {
         count.push(person);
       }
@@ -295,7 +264,7 @@ class Chart extends Component {
 
   getGenderFemale() {
     var list = [];
-    datas.map(person => {
+    datas.map((person) => {
       if (person.gender === "female") {
         list.push(person);
       }
@@ -307,12 +276,12 @@ class Chart extends Component {
     displayTitle: true,
     displayLegend: true,
     legendPosition: "right",
-    location: "City"
+    location: "City",
   };
 
-  onInputChange = event => {
+  onInputChange = (event) => {
     this.setState({
-      [event.target.id]: event.target.value
+      [event.target.id]: event.target.value,
     });
     document.getElementById(event.target.id).classList.remove("is-danger");
   };
@@ -328,13 +297,13 @@ class Chart extends Component {
       backgroundColor: "#297373",
       borderRadius: "50%",
       width: 85,
-      height: 85
+      height: 85,
     };
     var circleStyle2 = {
       backgroundColor: "#FFFFFF",
       borderRadius: "50%",
       width: 65,
-      height: 65
+      height: 65,
     };
     return (
       <div
@@ -429,29 +398,29 @@ class Chart extends Component {
               title: {
                 display: this.props.displayTitle,
                 text: "Aldersfordeling ",
-                fontSize: 15
+                fontSize: 15,
               },
               legend: {
                 display: this.props.displayLegend,
-                position: this.props.legendPosition
+                position: this.props.legendPosition,
               },
               layout: {
                 padding: {
                   left: 0,
                   right: 0,
                   top: 0,
-                  bottom: 0
-                }
+                  bottom: 0,
+                },
               },
               scales: {
                 yAxes: [
                   {
                     ticks: {
-                      beginAtZero: true
-                    }
-                  }
-                ]
-              }
+                      beginAtZero: true,
+                    },
+                  },
+                ],
+              },
             }}
           />
         </div>
@@ -462,30 +431,15 @@ class Chart extends Component {
             width: 210,
             position: "absolute",
             top: "140px",
-            left: "470px"
+            left: "470px",
           }}
         >
-          <Doughnut
-            data={this.state.pieData}
-            options={{
-              title: {
-                display: this.props.displayTitle,
-                text: "",
-                fontSize: 15
-              },
-              legend: {
-                display: false,
-                position: this.props.legendPosition
-              },
-              scales: {}
-            }}
-          />
           <div
             style={{
               position: "absolute",
               top: "58px",
               left: "95px",
-              fontSize: 18
+              fontSize: 18,
             }}
           >
             63
@@ -497,7 +451,7 @@ class Chart extends Component {
             position: "absolute",
             top: "420px",
             left: "440px",
-            fontSize: 13
+            fontSize: 13,
           }}
         >
           Antal gæster {<br />}
@@ -512,7 +466,7 @@ class Chart extends Component {
             position: "absolute",
             top: "473px",
             left: "457px",
-            fontSize: 37
+            fontSize: 37,
           }}
         >
           37

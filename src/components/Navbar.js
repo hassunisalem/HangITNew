@@ -1,23 +1,34 @@
 import React, { Component } from "react";
 import { Auth } from "aws-amplify";
+import store from "../store";
+import * as ActionConstructer from "../actions/ActionConstructer";
+// {this.props.auth.isAuthenticated && this.props.auth.user && (
+// )}
 
 export default class Navbar extends Component {
-  handleLogOut = async event => {
+  handleLogOut = async (event) => {
     event.preventDefault();
-    try {
-      Auth.signOut();
-      this.props.auth.setAuthStatus(false);
-      this.props.auth.setUser(null);
-    } catch (error) {
-      console.log(error.message);
-    }
+    Auth.signOut();
+    store.dispatch(ActionConstructer.setIsLogged(false));
+    this.props.auth.setAuthStatus(false);
+    this.props.auth.setUser(null);
   };
+
   render() {
+    var chartPage;
+    if (store.getState().Logged) {
+      chartPage = (
+        <a href="/chart" className="navbar-item">
+          bruger data
+        </a>
+      );
+    } else chartPage = "";
+
     return (
       <nav className="navbar" role="navigation" aria-label="main navigation">
         <div className="navbar-brand">
           <a className="navbar-item" href="/">
-            <h1> Coat </h1>
+            <h1> HangIT </h1>
           </a>
         </div>
 
@@ -26,12 +37,7 @@ export default class Navbar extends Component {
             <a href="/" className="navbar-item">
               Home
             </a>
-
-            {this.props.auth.isAuthenticated && this.props.auth.user && (
-              <a href="/chart" className="navbar-item">
-                bruger data
-              </a>
-            )}
+            {chartPage}
           </div>
 
           <div className="navbar-end">
