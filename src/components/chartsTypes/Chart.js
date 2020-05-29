@@ -41,31 +41,22 @@ class Chart extends Component {
         },
       ],
     },
-    exampleData: {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
-      datasets: [
-        {
-          label: "My First dataset",
-          fill: false,
-          lineTension: 0.1,
-          backgroundColor: "rgba(75,192,192,0.4)",
-          borderColor: "rgba(75,192,192,1)",
-          borderCapStyle: "round",
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: "miter",
-          pointBorderColor: "rgba(75,192,192,1)",
-          pointBackgroundColor: "#fff",
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "rgba(75,192,192,1)",
-          pointHoverBorderColor: "rgba(220,220,220,1)",
-          pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10,
-          data: [65, 59, 80, 81, 56, 55, 40],
-        },
-      ],
+    vistedUsers: {
+      labels: [],
+      datasets: [],
+    },
+    patronUsers: {
+      labels: [],
+      datasets: [],
+    },
+    durationOfStay: {
+      labels: [],
+      datasets: [],
+    },
+    visitingUsers: {
+      labels: [],
+      datasets: [],
+      total: [],
     },
   };
 
@@ -76,13 +67,12 @@ class Chart extends Component {
     var alderTil = this.state.alderTil;
     var gender = this.state.gender;
 
-    this.fetchUserData(datoFra, datoTil, alderFra, alderTil, gender);
+    console.log(Auth);
 
-    store.dispatch(
-      ActionConstructer.setIdToken(
-        (await Auth.currentSession()).getIdToken().getJwtToken()
-      )
-    );
+    this.fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender);
+    this.fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender);
+    this.fetchDurationOfStay(datoFra, datoTil, alderFra, alderTil, gender);
+    this.fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender);
   }
 
   // 2020-01-1%2022:23:00
@@ -101,7 +91,7 @@ class Chart extends Component {
       this.state.alderFra;
  */
 
-  fetchUserData(datoFra, datoTil, alderFra, alderTil, gender) {
+  fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender) {
     var durationOfStay =
       "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?";
 
@@ -128,35 +118,282 @@ class Chart extends Component {
 
     console.log(URL);
 
-    console.log(store.getState());
-    // headers skal passes videre som props, efter man er logget ind
-
     fetch(URL, {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "http://localhost:3000/chart",
-        Authorization: store.getState(),
+        Authorization: store.getState().IdToken,
       },
       mode: "cors",
     })
       .then((response) => response.json())
       .then((repos) => {
         this.setState({
-          testData: {
+          vistedUsers: {
             labels: repos.x,
             datasets: [
               {
                 data: repos.y,
-                label: "Antal Oprettet",
-                backgroundColor: "rgba(0, 255, 0, 0.3)",
               },
             ],
           },
         });
 
-        console.log(this.state.testData);
+        console.log(this.state.vistedUsers);
       });
   }
+
+  fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender) {
+    var URL =
+      "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer0&venueId=1&timeStampStart=" +
+      datoFra +
+      "&timeStampEnd=" +
+      datoTil +
+      "&ageEnd=" +
+      alderTil +
+      "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
+      gender +
+      "&ageStart=" +
+      alderFra;
+
+    console.log(URL);
+
+    fetch(URL, {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "http://localhost:3000/chart",
+        Authorization: store.getState().IdToken,
+      },
+      mode: "cors",
+    })
+      .then((response) => response.json())
+      .then((repos) => {
+        this.setState({
+          patronUsers: {
+            labels: repos.x,
+            datasets: [
+              {
+                data: repos.y,
+              },
+            ],
+          },
+        });
+
+        console.log(this.state.patronUsers);
+      });
+  }
+
+  fetchDurationOfStay(datoFra, datoTil, alderFra, alderTil, gender) {
+    var URL =
+      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer0&venueId=1&timeStampStart=" +
+      datoFra +
+      "&timeStampEnd=" +
+      datoTil +
+      "&ageEnd=" +
+      alderTil +
+      "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
+      gender +
+      "&ageStart=" +
+      alderFra;
+
+    console.log(URL);
+
+    fetch(URL, {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "http://localhost:3000/chart",
+        Authorization: store.getState().IdToken,
+      },
+      mode: "cors",
+    })
+      .then((response) => response.json())
+      .then((repos) => {
+        this.setState({
+          durationOfStay: {
+            labels: repos.x,
+            datasets: [
+              {
+                data: repos.y,
+              },
+            ],
+          },
+        });
+
+        console.log(this.state.durationOfStay);
+      });
+  }
+
+  fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender) {
+    var URL =
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=retrieval&customerId=Customer0&venueId=1&timeStampStart=" +
+      datoFra +
+      "&timeStampEnd=" +
+      datoTil +
+      "&ageEnd=" +
+      alderTil +
+      "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
+      gender +
+      "&ageStart=" +
+      alderFra;
+
+    console.log(URL);
+
+    fetch(URL, {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "http://localhost:3000/chart",
+        Authorization: store.getState().IdToken,
+      },
+      mode: "cors",
+    })
+      .then((response) => response.json())
+      .then((repos) => {
+        this.setState({
+          visitingUsers: {
+            labels: repos.x,
+            datasets: [
+              {
+                data: repos.y,
+              },
+            ],
+            total: repos.y.reduce((result, number) => result + number),
+          },
+        });
+
+        console.log(this.state.visitingUsers);
+      });
+  }
+
+  // setGradientColor = (canvas, color) => {
+  //   const ctx = canvas.getContext("2d");
+  //   const gradient = ctx.createLinearGradient(0, 0, 600,500);
+  //   gradient.addColorStop(0,color)
+  //   gradient.
+  // };
+
+  getVistedChart = () => {
+    const data = this.state.vistedUsers;
+    if (data.datasets) {
+      let colors = ["rgba(217, 39, 39, 1)", "rgba(75,192,192,0.4)"];
+      data.datasets.forEach((set, i) => {
+        set.backgroundColor = colors[i];
+        set.borderColor = "white";
+        set.borderWidth = 2;
+        set.label = "";
+        set.fill = false;
+        set.lineTension = 0.1;
+        set.backgroundColor = "rgba(75,192,192,0.4)";
+        set.borderColor = "rgba(75,192,192,1)";
+        set.borderCapStyle = "round";
+        set.borderDash = [];
+        set.borderDashOffset = 0.0;
+        set.borderJoinStyle = "miter";
+        set.pointBorderColor = "rgba(75,192,192,1)";
+        set.pointBackgroundColor = "#fff";
+        set.pointBorderWidth = 1;
+        set.pointHoverRadius = 5;
+        set.pointHoverBackgroundColor = "rgba(75,192,192,1)";
+        set.pointHoverBorderColor = "rgba(220,220,220,1)";
+        set.pointHoverBorderWidth = 2;
+        set.pointRadius = 1;
+        set.pointHitRadius = 10;
+      });
+    }
+    return data;
+  };
+
+  getDurationChart = () => {
+    const data = this.state.durationOfStay;
+    if (data.datasets) {
+      let colors = ["rgba(217, 39, 39, 1)", "rgba(75,192,192,0.4)"];
+      data.datasets.forEach((set, i) => {
+        set.backgroundColor = colors[i];
+        set.borderColor = "white";
+        set.borderWidth = 2;
+        set.label = "";
+        set.fill = false;
+        set.lineTension = 0.1;
+        set.backgroundColor = "rgba(75,192,192,0.4)";
+        set.borderColor = "rgba(75,192,192,1)";
+        set.borderCapStyle = "round";
+        set.borderDash = [];
+        set.borderDashOffset = 0.0;
+        set.borderJoinStyle = "miter";
+        set.pointBorderColor = "rgba(75,192,192,1)";
+        set.pointBackgroundColor = "#fff";
+        set.pointBorderWidth = 1;
+        set.pointHoverRadius = 5;
+        set.pointHoverBackgroundColor = "rgba(75,192,192,1)";
+        set.pointHoverBorderColor = "rgba(220,220,220,1)";
+        set.pointHoverBorderWidth = 2;
+        set.pointRadius = 1;
+        set.pointHitRadius = 10;
+      });
+    }
+    return data;
+  };
+
+  getPatronChart = () => {
+    const data = this.state.patronUsers;
+    if (data.datasets) {
+      let colors = ["rgba(217, 39, 39, 1)", "rgba(75,192,192,0.4)"];
+      data.datasets.forEach((set, i) => {
+        set.backgroundColor = colors[i];
+        set.borderColor = "white";
+        set.borderWidth = 2;
+        set.label = "";
+        set.fill = false;
+        set.lineTension = 0.1;
+        set.backgroundColor = "rgba(75,192,192,0.4)";
+        set.borderColor = "rgba(75,192,192,1)";
+        set.borderCapStyle = "round";
+        set.borderDash = [];
+        set.borderDashOffset = 0.0;
+        set.borderJoinStyle = "miter";
+        set.pointBorderColor = "rgba(75,192,192,1)";
+        set.pointBackgroundColor = "#fff";
+        set.pointBorderWidth = 1;
+        set.pointHoverRadius = 5;
+        set.pointHoverBackgroundColor = "rgba(75,192,192,1)";
+        set.pointHoverBorderColor = "rgba(220,220,220,1)";
+        set.pointHoverBorderWidth = 2;
+        set.pointRadius = 1;
+        set.pointHitRadius = 10;
+      });
+    }
+    return data;
+  };
+
+  getVisitingChart = () => {
+    const data = this.state.visitingUsers;
+    if (data.datasets) {
+      let colors = ["rgba(217, 39, 39, 1)", "rgba(75,192,192,0.4)"];
+      data.datasets.forEach((set, i) => {
+        set.backgroundColor = colors[i];
+        set.borderColor = "white";
+        set.borderWidth = 2;
+        set.label = "";
+        set.fill = false;
+        set.lineTension = 0.1;
+        set.backgroundColor = "rgba(75,192,192,0.4)";
+        set.borderColor = "rgba(75,192,192,1)";
+        set.borderCapStyle = "round";
+        set.borderDash = [];
+        set.borderDashOffset = 0.0;
+        set.borderJoinStyle = "miter";
+        set.pointBorderColor = "rgba(75,192,192,1)";
+        set.pointBackgroundColor = "#fff";
+        set.pointBorderWidth = 1;
+        set.pointHoverRadius = 5;
+        set.pointHoverBackgroundColor = "rgba(75,192,192,1)";
+        set.pointHoverBorderColor = "rgba(220,220,220,1)";
+        set.pointHoverBorderWidth = 2;
+        set.pointRadius = 1;
+        set.pointHitRadius = 10;
+      });
+    }
+    return data;
+  };
 
   handleSubmit = async (event) => {
     event.preventDefault();
@@ -167,7 +404,10 @@ class Chart extends Component {
     var alderTil = this.state.alderTil;
     var gender = this.state.gender;
 
-    this.fetchUserData(datoFra, datoTil, alderFra, alderTil, gender);
+    this.fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender);
+    this.fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender);
+    this.fetchDurationOfStay(datoFra, datoTil, alderFra, alderTil, gender);
+    this.fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender);
   };
   // "customerId = " + customerId + "&venueId= " + venueId + "&venueId= " + venueId;
 
@@ -287,24 +527,6 @@ class Chart extends Component {
   };
 
   render() {
-    var circleStyle = {
-      position: "absolute",
-      top: "440px",
-      left: "416px",
-      padding: 10,
-      margin: 20,
-      display: "inline-block",
-      backgroundColor: "#297373",
-      borderRadius: "50%",
-      width: 85,
-      height: 85,
-    };
-    var circleStyle2 = {
-      backgroundColor: "#FFFFFF",
-      borderRadius: "50%",
-      width: 65,
-      height: 65,
-    };
     return (
       <div
         className="all charts"
@@ -315,7 +537,7 @@ class Chart extends Component {
           style={{ textAlign: "left", height: 300, width: 650 }}
         >
           <form onSubmit={this.handleSubmit}>
-            <div className="field">
+            <div className="field" style={{ width: "100px" }}>
               <p className="control">
                 fra
                 <input
@@ -328,7 +550,7 @@ class Chart extends Component {
                 />
               </p>
             </div>
-            <div className="field">
+            <div className="field" style={{ width: "100px" }}>
               <p className="control">
                 til
                 <input
@@ -342,7 +564,7 @@ class Chart extends Component {
               </p>
             </div>
 
-            <div className="field">
+            <div className="field" style={{ width: "100px" }}>
               <p className="control">
                 fra
                 <input
@@ -356,7 +578,7 @@ class Chart extends Component {
               </p>
             </div>
 
-            <div className="field">
+            <div className="field" style={{ width: "100px" }}>
               <p className="control">
                 til
                 <input
@@ -370,7 +592,7 @@ class Chart extends Component {
               </p>
             </div>
 
-            <div className="field">
+            <div className="field" style={{ width: "100px" }}>
               <p className="control">
                 Gender
                 <input
@@ -392,39 +614,137 @@ class Chart extends Component {
           </form>
 
           <br></br>
-          <Bar
-            data={this.state.testData}
-            options={{
-              title: {
-                display: this.props.displayTitle,
-                text: "Aldersfordeling ",
-                fontSize: 15,
-              },
-              legend: {
-                display: this.props.displayLegend,
-                position: this.props.legendPosition,
-              },
-              layout: {
-                padding: {
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                },
-              },
-              scales: {
-                yAxes: [
-                  {
-                    ticks: {
-                      beginAtZero: true,
-                    },
-                  },
-                ],
-              },
+          <div
+            style={{
+              position: "absolute",
+              width: 600,
+              height: 500,
+              top: "473px",
+              left: "660px",
             }}
-          />
-        </div>
+          >
+            <Bar
+              data={this.getVistedChart}
+              options={{
+                responsive: true,
+                title: {
+                  display: this.props.displayTitle,
+                  text: "Besøgte Gæster",
+                  fontSize: 15,
+                },
+                legend: {
+                  display: false,
+                  position: this.props.legendPosition,
+                },
+                layout: {
+                  padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                  },
+                },
+                scales: {
+                  yAxes: [
+                    {
+                      ticks: {
+                        beginAtZero: true,
+                      },
+                    },
+                  ],
+                },
+              }}
+            />
+          </div>
 
+          <div
+            style={{
+              position: "absolute",
+              width: 250,
+              height: 100,
+              top: "290px",
+              left: "780px",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                width: 250,
+                height: 100,
+                top: "68px",
+                left: "115px",
+              }}
+            >
+              {this.state.visitingUsers.total}
+            </div>
+            <Doughnut
+              data={this.getVisitingChart}
+              options={{
+                responsive: true,
+                title: {
+                  display: this.props.displayTitle,
+                  text: "Nuværende Gæster",
+                  fontSize: 15,
+                },
+                legend: {
+                  display: false,
+                  position: this.props.legendPosition,
+                },
+                layout: {
+                  padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                  },
+                },
+              }}
+            />
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              width: 500,
+              height: 400,
+              top: "473px",
+              left: "140px",
+            }}
+          >
+            <Line
+              data={this.getDurationChart}
+              options={{
+                responsive: true,
+                title: {
+                  display: this.props.displayTitle,
+                  text: "Besøg Tid",
+                  fontSize: 15,
+                },
+                legend: {
+                  display: false,
+                  position: this.props.legendPosition,
+                },
+                layout: {
+                  padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                  },
+                },
+                scales: {
+                  yAxes: [
+                    {
+                      ticks: {
+                        beginAtZero: true,
+                      },
+                    },
+                  ],
+                },
+              }}
+            />
+          </div>
+        </div>
         <div
           style={{
             height: 210,
@@ -436,40 +756,46 @@ class Chart extends Component {
         >
           <div
             style={{
+              width: 400,
+              height: 300,
               position: "absolute",
-              top: "58px",
-              left: "95px",
-              fontSize: 18,
+              top: "-50px",
+              left: "200px",
             }}
           >
-            63
+            <Bar
+              data={this.getPatronChart}
+              options={{
+                responsive: true,
+                title: {
+                  display: this.props.displayTitle,
+                  text: "Stamkunder",
+                  fontSize: 15,
+                },
+                legend: {
+                  display: false,
+                  position: this.props.legendPosition,
+                },
+                layout: {
+                  padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                  },
+                },
+                scales: {
+                  yAxes: [
+                    {
+                      ticks: {
+                        beginAtZero: true,
+                      },
+                    },
+                  ],
+                },
+              }}
+            />
           </div>
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            top: "420px",
-            left: "440px",
-            fontSize: 13,
-          }}
-        >
-          Antal gæster {<br />}
-          Nu
-        </div>
-
-        <div style={circleStyle}>
-          <div style={circleStyle2}> </div>
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            top: "473px",
-            left: "457px",
-            fontSize: 37,
-          }}
-        >
-          37
         </div>
       </div>
     );

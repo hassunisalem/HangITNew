@@ -14,7 +14,6 @@ import ChangePasswordConfirm from "./components/auth/ChangePasswordConfirm";
 import Welcome from "./components/auth/Welcome";
 
 import { Auth } from "aws-amplify";
-import Amplify from "aws-amplify";
 import { withAuthenticator } from "aws-amplify-react";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
