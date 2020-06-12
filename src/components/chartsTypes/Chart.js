@@ -1,46 +1,35 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import datas from "../DummyData.json";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import store from "../../store";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-dates/initialize";
+import "react-dates/lib/css/_datepicker.css";
+
+import calender from "../Calender";
+import { DateRangePicker } from "react-dates";
+
+import DatePicker from "react-datepicker";
 
 import { Auth } from "aws-amplify";
 
 import * as ActionConstructer from "../../actions/ActionConstructer";
-import ReactCSSTransitionGroup from "react-addons-css-transition-group";
-import {
-  Col,
-  Card,
-  CardBody,
-  CardTitle,
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormText,
-} from "reactstrap";
 
-import ChartLine from "./ChartLine";
+import { registerLocale, setDefaultLocale } from "react-datepicker";
+import es from "date-fns/locale/es";
+registerLocale("es", es);
 
 class Chart extends Component {
   state = {
-    datoFra: "2020-05-11%2015:16:00",
-    datoTil: "2020-10-14%2022:09:00",
+    focusedInput: "",
+
+    startDate: "",
+    endDate: "",
+
     alderFra: "1",
     alderTil: "100",
     gender: "NULL",
 
-    testData: {
-      labels: [],
-
-      datasets: [
-        {
-          label: "Antal Oprettet",
-          backgroundColor: "rgba(0, 255, 0, 0.3)",
-          data: [],
-        },
-      ],
-    },
     vistedUsers: {
       labels: [],
       datasets: [],
@@ -61,18 +50,18 @@ class Chart extends Component {
   };
 
   async componentDidMount() {
-    var datoFra = this.state.datoFra;
-    var datoTil = this.state.datoTil;
+    var startDate = this.state.startDate;
+    var endDate = this.state.endDate;
     var alderFra = this.state.alderFra;
     var alderTil = this.state.alderTil;
     var gender = this.state.gender;
 
     console.log(Auth);
 
-    this.fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender);
-    this.fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender);
-    this.fetchDurationOfStay(datoFra, datoTil, alderFra, alderTil, gender);
-    this.fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender);
+    // // this.fetchVisitedUsers(startDate, endDate, alderFra, alderTil, gender);
+    // this.fetchPatronUsers(startDate, endDate, alderFra, alderTil, gender);
+    // this.fetchDurationOfStay(startDate, endDate, alderFra, alderTil, gender);
+    // this.fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender);
   }
 
   // 2020-01-1%2022:23:00
@@ -91,24 +80,12 @@ class Chart extends Component {
       this.state.alderFra;
  */
 
-  fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender) {
-    var durationOfStay =
-      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?";
-
-    var retDel =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&";
-
-    var patronUsers =
-      "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?";
-
-    var getDistrbution =
-      "https://k7mb52gfg0.execute-api.eu-central-1.amazonaws.com/dev?";
-
+  fetchVisitedUsers(startDate, endDate, alderFra, alderTil, gender) {
     var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer0&venueId=1&timeStampStart=" +
-      datoFra +
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer_1&venueId=NULL&timeStampStart=" +
+      startDate +
       "&timeStampEnd=" +
-      datoTil +
+      endDate +
       "&ageEnd=" +
       alderTil +
       "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
@@ -143,12 +120,12 @@ class Chart extends Component {
       });
   }
 
-  fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender) {
+  fetchPatronUsers(startDate, endDate, alderFra, alderTil, gender) {
     var URL =
-      "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer0&venueId=1&timeStampStart=" +
-      datoFra +
+      "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=NULL&timeStampStart=" +
+      startDate +
       "&timeStampEnd=" +
-      datoTil +
+      endDate +
       "&ageEnd=" +
       alderTil +
       "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
@@ -183,12 +160,12 @@ class Chart extends Component {
       });
   }
 
-  fetchDurationOfStay(datoFra, datoTil, alderFra, alderTil, gender) {
+  fetchDurationOfStay(startDate, endDate, alderFra, alderTil, gender) {
     var URL =
-      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer0&venueId=1&timeStampStart=" +
-      datoFra +
+      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=NULL&timeStampStart=" +
+      startDate +
       "&timeStampEnd=" +
-      datoTil +
+      endDate +
       "&ageEnd=" +
       alderTil +
       "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
@@ -223,12 +200,12 @@ class Chart extends Component {
       });
   }
 
-  fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender) {
+  fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender) {
     var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=retrieval&customerId=Customer0&venueId=1&timeStampStart=" +
-      datoFra +
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=retrieval&customerId=Customer_0&venueId=NULL&timeStampStart=" +
+      startDate +
       "&timeStampEnd=" +
-      datoTil +
+      endDate +
       "&ageEnd=" +
       alderTil +
       "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
@@ -256,7 +233,7 @@ class Chart extends Component {
                 data: repos.y,
               },
             ],
-            total: repos.y.reduce((result, number) => result + number),
+            // total: repos.y.reduce((result, number) => result + number),
           },
         });
 
@@ -526,7 +503,22 @@ class Chart extends Component {
     document.getElementById(event.target.id).classList.remove("is-danger");
   };
 
+  // setStartDate(date) {
+  //   this.setState({ startDate: date });
+
+  //   return "June 7, 2020 5:34 PM";
+  // }
+
+  setStartDate(date) {
+    this.setState({ startDate: date });
+  }
+
+  setEndDate(date) {
+    this.setState({ endDate: date });
+  }
+
   render() {
+    calender();
     return (
       <div
         className="all charts"
@@ -536,10 +528,22 @@ class Chart extends Component {
           className="aldersfordeling chart"
           style={{ textAlign: "left", height: 300, width: 650 }}
         >
+          {/* <DateRangePicker
+            startDate={this.state.startDate} // momentPropTypes.momentObj or null,
+            startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+            endDate={this.state.endDate} // momentPropTypes.momentObj or null,
+            endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+            onDatesChange={({ startDate, endDate }) =>
+              this.setState({ startDate, endDate })
+            } // PropTypes.func.isRequired,
+            focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+            onFocusChange={(focusedInput) => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+          /> */}
+
           <form onSubmit={this.handleSubmit}>
-            <div className="field" style={{ width: "100px" }}>
+            {/* <div className="field" style={{ width: "100px" }}>
               <p className="control">
-                fra
+                Dato fra
                 <input
                   className="input"
                   type="text"
@@ -552,7 +556,7 @@ class Chart extends Component {
             </div>
             <div className="field" style={{ width: "100px" }}>
               <p className="control">
-                til
+                Dato til
                 <input
                   className="input"
                   type="text"
@@ -562,11 +566,11 @@ class Chart extends Component {
                   onChange={this.onInputChange}
                 />
               </p>
-            </div>
+            </div> */}
 
             <div className="field" style={{ width: "100px" }}>
               <p className="control">
-                fra
+                Alder fra
                 <input
                   className="input"
                   type="text"
@@ -580,7 +584,7 @@ class Chart extends Component {
 
             <div className="field" style={{ width: "100px" }}>
               <p className="control">
-                til
+                Alder til
                 <input
                   className="input"
                   type="text"
@@ -594,7 +598,7 @@ class Chart extends Component {
 
             <div className="field" style={{ width: "100px" }}>
               <p className="control">
-                Gender
+                Køn
                 <input
                   className="input"
                   type="text"
