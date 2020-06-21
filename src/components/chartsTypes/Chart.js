@@ -17,14 +17,19 @@ import * as ActionConstructer from "../../actions/ActionConstructer";
 
 import { registerLocale, setDefaultLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
+import { Dropdown } from "reactstrap";
+// import getVenues from "./getVenues";
+
 registerLocale("es", es);
 
 class Chart extends Component {
   state = {
+    venues: ["nice", "nice", "nice"],
+
     focusedInput: "",
 
-    startDate: "",
-    endDate: "",
+    startDate: "2018-01-01 22:20:23",
+    endDate: "2020-12-30 22:20:23",
 
     alderFra: "1",
     alderTil: "100",
@@ -56,12 +61,10 @@ class Chart extends Component {
     var alderTil = this.state.alderTil;
     var gender = this.state.gender;
 
-    console.log(Auth);
-
-    // // this.fetchVisitedUsers(startDate, endDate, alderFra, alderTil, gender);
-    // this.fetchPatronUsers(startDate, endDate, alderFra, alderTil, gender);
-    // this.fetchDurationOfStay(startDate, endDate, alderFra, alderTil, gender);
-    // this.fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender);
+    this.fetchVisitedUsers(startDate, endDate, alderFra, alderTil, gender);
+    this.fetchPatronUsers(startDate, endDate, alderFra, alderTil, gender);
+    this.fetchDurationOfStay(startDate, endDate, alderFra, alderTil, gender);
+    this.fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender);
   }
 
   // 2020-01-1%2022:23:00
@@ -82,7 +85,7 @@ class Chart extends Component {
 
   fetchVisitedUsers(startDate, endDate, alderFra, alderTil, gender) {
     var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer_1&venueId=NULL&timeStampStart=" +
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=retrieval&customerId=Customer_0&venueId=1&timeStampStart=" +
       startDate +
       "&timeStampEnd=" +
       endDate +
@@ -122,7 +125,7 @@ class Chart extends Component {
 
   fetchPatronUsers(startDate, endDate, alderFra, alderTil, gender) {
     var URL =
-      "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=NULL&timeStampStart=" +
+      "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=1&timeStampStart=" +
       startDate +
       "&timeStampEnd=" +
       endDate +
@@ -162,7 +165,7 @@ class Chart extends Component {
 
   fetchDurationOfStay(startDate, endDate, alderFra, alderTil, gender) {
     var URL =
-      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=NULL&timeStampStart=" +
+      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=1&timeStampStart=" +
       startDate +
       "&timeStampEnd=" +
       endDate +
@@ -202,7 +205,7 @@ class Chart extends Component {
 
   fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender) {
     var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=retrieval&customerId=Customer_0&venueId=NULL&timeStampStart=" +
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer_0&venueId=NULL&timeStampStart=" +
       startDate +
       "&timeStampEnd=" +
       endDate +
@@ -233,7 +236,7 @@ class Chart extends Component {
                 data: repos.y,
               },
             ],
-            // total: repos.y.reduce((result, number) => result + number),
+            total: repos.y.reduce((result, number) => result + number),
           },
         });
 
@@ -375,8 +378,8 @@ class Chart extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
 
-    var datoFra = this.state.datoFra;
-    var datoTil = this.state.datoTil;
+    var datoFra = this.state.startDate;
+    var datoTil = this.state.endDate;
     var alderFra = this.state.alderFra;
     var alderTil = this.state.alderTil;
     var gender = this.state.gender;
@@ -518,7 +521,6 @@ class Chart extends Component {
   }
 
   render() {
-    calender();
     return (
       <div
         className="all charts"
@@ -541,15 +543,15 @@ class Chart extends Component {
           /> */}
 
           <form onSubmit={this.handleSubmit}>
-            {/* <div className="field" style={{ width: "100px" }}>
+            <div className="field" style={{ width: "100px" }}>
               <p className="control">
                 Dato fra
                 <input
                   className="input"
                   type="text"
-                  id="datoFra"
+                  id="startDate"
                   placeholder="YYY-MM-DD hh:mm:ss"
-                  value={this.state.datoFra}
+                  value={this.state.startDate}
                   onChange={this.onInputChange}
                 />
               </p>
@@ -560,13 +562,13 @@ class Chart extends Component {
                 <input
                   className="input"
                   type="text"
-                  id="datoTil"
+                  id="endDate"
                   placeholder="YYY-MM-DD hh:mm:ss"
-                  value={this.state.datoTil}
+                  value={this.state.endDate}
                   onChange={this.onInputChange}
                 />
               </p>
-            </div> */}
+            </div>
 
             <div className="field" style={{ width: "100px" }}>
               <p className="control">
