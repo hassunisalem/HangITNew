@@ -13,6 +13,8 @@ import ChangePassword from "./components/auth/ChangePassword";
 import ChangePasswordConfirm from "./components/auth/ChangePasswordConfirm";
 import Welcome from "./components/auth/Welcome";
 
+import "react-dates/initialize";
+
 import { Auth } from "aws-amplify";
 import { withAuthenticator } from "aws-amplify-react";
 

@@ -1,10 +1,12 @@
 import React, { Component, useState } from "react";
+
 import datas from "../DummyData.json";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import store from "../../store";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "react-dates/initialize";
+
 import "react-dates/lib/css/_datepicker.css";
+import moment from "moment";
 
 import calender from "../Calender";
 import { DateRangePicker } from "react-dates";
@@ -24,12 +26,14 @@ registerLocale("es", es);
 
 class Chart extends Component {
   state = {
-    venues: ["nice", "nice", "nice"],
+    venues: [],
 
-    focusedInput: "",
+    focusedInput: null,
 
-    startDate: "2018-01-01 22:20:23",
-    endDate: "2020-12-30 22:20:23",
+    startDate: moment(),
+    endDate: "",
+
+    // moment().format("YYYY-MM-DD hh-mm-ss")
 
     alderFra: "1",
     alderTil: "100",
@@ -64,7 +68,7 @@ class Chart extends Component {
     this.fetchVisitedUsers(startDate, endDate, alderFra, alderTil, gender);
     this.fetchPatronUsers(startDate, endDate, alderFra, alderTil, gender);
     this.fetchDurationOfStay(startDate, endDate, alderFra, alderTil, gender);
-    this.fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender);
+    // this.fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender);
   }
 
   // 2020-01-1%2022:23:00
@@ -205,7 +209,7 @@ class Chart extends Component {
 
   fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender) {
     var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer_0&venueId=NULL&timeStampStart=" +
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer_0&venueId=1&timeStampStart=" +
       startDate +
       "&timeStampEnd=" +
       endDate +
@@ -236,7 +240,7 @@ class Chart extends Component {
                 data: repos.y,
               },
             ],
-            total: repos.y.reduce((result, number) => result + number),
+            //  total: repos.y.reduce((result, number) => result + number),
           },
         });
 
@@ -378,8 +382,8 @@ class Chart extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
 
-    var datoFra = this.state.startDate;
-    var datoTil = this.state.endDate;
+    var datoFra = this.state.startDate.format("YYYY-MM-DD hh:mm:ss");
+    var datoTil = this.state.endDate.format("YYYY-MM-DD hh:mm:ss");
     var alderFra = this.state.alderFra;
     var alderTil = this.state.alderTil;
     var gender = this.state.gender;
@@ -387,7 +391,7 @@ class Chart extends Component {
     this.fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender);
     this.fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender);
     this.fetchDurationOfStay(datoFra, datoTil, alderFra, alderTil, gender);
-    this.fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender);
+    //this.fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender);
   };
   // "customerId = " + customerId + "&venueId= " + venueId + "&venueId= " + venueId;
 
@@ -530,20 +534,21 @@ class Chart extends Component {
           className="aldersfordeling chart"
           style={{ textAlign: "left", height: 300, width: 650 }}
         >
-          {/* <DateRangePicker
+          <DateRangePicker
             startDate={this.state.startDate} // momentPropTypes.momentObj or null,
-            startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+            startDateId={"1"} // PropTypes.string.isRequired,
             endDate={this.state.endDate} // momentPropTypes.momentObj or null,
-            endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+            endDateId={"2"} // PropTypes.string.isRequired,
             onDatesChange={({ startDate, endDate }) =>
               this.setState({ startDate, endDate })
             } // PropTypes.func.isRequired,
             focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
             onFocusChange={(focusedInput) => this.setState({ focusedInput })} // PropTypes.func.isRequired,
-          /> */}
+            isOutsideRange={() => false}
+          />
 
           <form onSubmit={this.handleSubmit}>
-            <div className="field" style={{ width: "100px" }}>
+            {/* <div className="field" style={{ width: "100px" }}>
               <p className="control">
                 Dato fra
                 <input
@@ -568,7 +573,7 @@ class Chart extends Component {
                   onChange={this.onInputChange}
                 />
               </p>
-            </div>
+            </div> */}
 
             <div className="field" style={{ width: "100px" }}>
               <p className="control">
