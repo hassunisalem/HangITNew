@@ -29,6 +29,7 @@
     "react-datepicker": "^3.0.0",
     "react-dates": "^21.8.0",
     "react-dom": "^16.13.1",
+    "react-dropdown": "^1.7.0",
     "react-dropdown-date": "0.0.18",
     "react-redux": "^7.2.0",
     "react-router-dom": "^4.3.1",

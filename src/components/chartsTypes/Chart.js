@@ -13,13 +13,15 @@ import { DateRangePicker } from "react-dates";
 
 import DatePicker from "react-datepicker";
 
+import Dropdown from "react-dropdown";
+
 import { Auth } from "aws-amplify";
 
 import * as ActionConstructer from "../../actions/ActionConstructer";
 
 import { registerLocale, setDefaultLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
-import { Dropdown } from "reactstrap";
+
 // import getVenues from "./getVenues";
 
 registerLocale("es", es);
@@ -28,10 +30,12 @@ class Chart extends Component {
   state = {
     venues: [],
 
+    selectedOption: "Venue 0",
+
     focusedInput: null,
 
-    startDate: moment(),
-    endDate: "",
+    startDate: moment().subtract(14, "days"),
+    endDate: moment(),
 
     // moment().format("YYYY-MM-DD hh-mm-ss")
 
@@ -64,11 +68,34 @@ class Chart extends Component {
     var alderFra = this.state.alderFra;
     var alderTil = this.state.alderTil;
     var gender = this.state.gender;
+    var venue = this.state.selectedOption.value;
 
-    this.fetchVisitedUsers(startDate, endDate, alderFra, alderTil, gender);
-    this.fetchPatronUsers(startDate, endDate, alderFra, alderTil, gender);
-    this.fetchDurationOfStay(startDate, endDate, alderFra, alderTil, gender);
-    // this.fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender);
+    this.fetchVenues("Customer_0");
+    this.fetchVisitedUsers(
+      startDate,
+      endDate,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    this.fetchPatronUsers(
+      startDate,
+      endDate,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    this.fetchDurationOfStay(
+      startDate,
+      endDate,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    // this.fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender, venue);
   }
 
   // 2020-01-1%2022:23:00
@@ -87,9 +114,36 @@ class Chart extends Component {
       this.state.alderFra;
  */
 
-  fetchVisitedUsers(startDate, endDate, alderFra, alderTil, gender) {
+  fetchVenues(customerId) {
     var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=retrieval&customerId=Customer_0&venueId=1&timeStampStart=" +
+      "https://atvetw1fud.execute-api.eu-central-1.amazonaws.com/dev?customerId=" +
+      customerId;
+
+    console.log(URL);
+
+    fetch(URL, {
+      headers: {
+        // "Content-Type": "application/json",
+        // "Access-Control-Allow-Origin": "http://localhost:3000/chart",
+        Authorization: store.getState().IdToken,
+      },
+      mode: "cors",
+    })
+      .then((response) => response.json())
+      .then((repos) => {
+        this.setState({
+          venues: repos.VenueId,
+        });
+
+        console.log(this.state.venues);
+      });
+  }
+
+  fetchVisitedUsers(startDate, endDate, alderFra, alderTil, gender, venue) {
+    var URL =
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=retrieval&customerId=Customer_0&venueId=" +
+      venue +
+      "&timeStampStart=" +
       startDate +
       "&timeStampEnd=" +
       endDate +
@@ -104,8 +158,8 @@ class Chart extends Component {
 
     fetch(URL, {
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "http://localhost:3000/chart",
+        // "Content-Type": "application/json",
+        // "Access-Control-Allow-Origin": "http://localhost:3000/chart",
         Authorization: store.getState().IdToken,
       },
       mode: "cors",
@@ -127,9 +181,11 @@ class Chart extends Component {
       });
   }
 
-  fetchPatronUsers(startDate, endDate, alderFra, alderTil, gender) {
+  fetchPatronUsers(startDate, endDate, alderFra, alderTil, gender, venue) {
     var URL =
-      "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=1&timeStampStart=" +
+      "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=" +
+      venue +
+      "&timeStampStart=" +
       startDate +
       "&timeStampEnd=" +
       endDate +
@@ -144,8 +200,8 @@ class Chart extends Component {
 
     fetch(URL, {
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "http://localhost:3000/chart",
+        // "Content-Type": "application/json",
+        // "Access-Control-Allow-Origin": "http://localhost:3000/chart",
         Authorization: store.getState().IdToken,
       },
       mode: "cors",
@@ -167,9 +223,11 @@ class Chart extends Component {
       });
   }
 
-  fetchDurationOfStay(startDate, endDate, alderFra, alderTil, gender) {
+  fetchDurationOfStay(startDate, endDate, alderFra, alderTil, gender, venue) {
     var URL =
-      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=1&timeStampStart=" +
+      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=" +
+      venue +
+      "&timeStampStart=" +
       startDate +
       "&timeStampEnd=" +
       endDate +
@@ -184,8 +242,8 @@ class Chart extends Component {
 
     fetch(URL, {
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "http://localhost:3000/chart",
+        // "Content-Type": "application/json",
+        // "Access-Control-Allow-Origin": "http://localhost:3000/chart",
         Authorization: store.getState().IdToken,
       },
       mode: "cors",
@@ -207,9 +265,11 @@ class Chart extends Component {
       });
   }
 
-  fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender) {
+  fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender, venue) {
     var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer_0&venueId=1&timeStampStart=" +
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer_0&venueId=" +
+      venue +
+      "&timeStampStart=" +
       startDate +
       "&timeStampEnd=" +
       endDate +
@@ -224,25 +284,27 @@ class Chart extends Component {
 
     fetch(URL, {
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "http://localhost:3000/chart",
+        // "Content-Type": "application/json",
+        // "Access-Control-Allow-Origin": "http://localhost:3000/chart",
         Authorization: store.getState().IdToken,
       },
       mode: "cors",
     })
       .then((response) => response.json())
       .then((repos) => {
-        this.setState({
-          visitingUsers: {
-            labels: repos.x,
-            datasets: [
-              {
-                data: repos.y,
-              },
-            ],
-            //  total: repos.y.reduce((result, number) => result + number),
-          },
-        });
+        if (repos.y != null) {
+          this.setState({
+            visitingUsers: {
+              labels: repos.x,
+              datasets: [
+                {
+                  data: repos.y,
+                },
+              ],
+              total: repos.y.reduce((result, number) => result + number),
+            },
+          });
+        }
 
         console.log(this.state.visitingUsers);
       });
@@ -387,11 +449,22 @@ class Chart extends Component {
     var alderFra = this.state.alderFra;
     var alderTil = this.state.alderTil;
     var gender = this.state.gender;
+    var venue = this.state.selectedOption.value;
 
-    this.fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender);
-    this.fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender);
-    this.fetchDurationOfStay(datoFra, datoTil, alderFra, alderTil, gender);
-    //this.fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender);
+    console.log(datoFra);
+
+    this.fetchVenues("Customer_0");
+    this.fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
+    this.fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
+    this.fetchDurationOfStay(
+      datoFra,
+      datoTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    this.fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
   };
   // "customerId = " + customerId + "&venueId= " + venueId + "&venueId= " + venueId;
 
@@ -510,6 +583,11 @@ class Chart extends Component {
     document.getElementById(event.target.id).classList.remove("is-danger");
   };
 
+  _onSelect = (selectedOption) => {
+    this.setState({ selectedOption });
+    console.log(this.state.selectedOption.value);
+  };
+
   // setStartDate(date) {
   //   this.setState({ startDate: date });
 
@@ -525,6 +603,8 @@ class Chart extends Component {
   }
 
   render() {
+    const selectedOption = this.state.venues;
+
     return (
       <div
         className="all charts"
@@ -534,6 +614,13 @@ class Chart extends Component {
           className="aldersfordeling chart"
           style={{ textAlign: "left", height: 300, width: 650 }}
         >
+          <Dropdown
+            value={selectedOption}
+            onChange={this._onSelect}
+            options={this.state.venues}
+            placeholder="Select a Venue"
+          />
+          <br></br>
           <DateRangePicker
             startDate={this.state.startDate} // momentPropTypes.momentObj or null,
             startDateId={"1"} // PropTypes.string.isRequired,
@@ -546,7 +633,6 @@ class Chart extends Component {
             onFocusChange={(focusedInput) => this.setState({ focusedInput })} // PropTypes.func.isRequired,
             isOutsideRange={() => false}
           />
-
           <form onSubmit={this.handleSubmit}>
             {/* <div className="field" style={{ width: "100px" }}>
               <p className="control">
@@ -623,7 +709,6 @@ class Chart extends Component {
               </p>
             </div>
           </form>
-
           <br></br>
           <div
             style={{
@@ -667,7 +752,6 @@ class Chart extends Component {
               }}
             />
           </div>
-
           <div
             style={{
               position: "absolute",
@@ -712,7 +796,6 @@ class Chart extends Component {
               }}
             />
           </div>
-
           <div
             style={{
               position: "absolute",
