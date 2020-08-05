@@ -30,11 +30,11 @@ class Chart extends Component {
   state = {
     venues: [],
 
-    selectedOption: "Venue 0",
+    selectedOption: "1",
 
     focusedInput: null,
 
-    startDate: moment().subtract(14, "days"),
+    startDate: moment().subtract(10, "years"),
     endDate: moment(),
 
     // moment().format("YYYY-MM-DD hh-mm-ss")
@@ -63,39 +63,25 @@ class Chart extends Component {
   };
 
   async componentDidMount() {
-    var startDate = this.state.startDate;
-    var endDate = this.state.endDate;
+    var datoFra = this.state.startDate.format("YYYY-MM-DD hh:mm:ss");
+    var datoTil = this.state.endDate.format("YYYY-MM-DD hh:mm:ss");
     var alderFra = this.state.alderFra;
     var alderTil = this.state.alderTil;
     var gender = this.state.gender;
     var venue = this.state.selectedOption.value;
 
     this.fetchVenues("Customer_0");
-    this.fetchVisitedUsers(
-      startDate,
-      endDate,
-      alderFra,
-      alderTil,
-      gender,
-      venue
-    );
-    this.fetchPatronUsers(
-      startDate,
-      endDate,
-      alderFra,
-      alderTil,
-      gender,
-      venue
-    );
+    this.fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
+    this.fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
     this.fetchDurationOfStay(
-      startDate,
-      endDate,
+      datoFra,
+      datoTil,
       alderFra,
       alderTil,
       gender,
       venue
     );
-    // this.fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender, venue);
+    this.fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
   }
 
   // 2020-01-1%2022:23:00
@@ -451,8 +437,6 @@ class Chart extends Component {
     var gender = this.state.gender;
     var venue = this.state.selectedOption.value;
 
-    console.log(datoFra);
-
     this.fetchVenues("Customer_0");
     this.fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
     this.fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
@@ -618,7 +602,6 @@ class Chart extends Component {
             value={selectedOption}
             onChange={this._onSelect}
             options={this.state.venues}
-            placeholder="Select a Venue"
           />
           <br></br>
           <DateRangePicker
@@ -660,6 +643,34 @@ class Chart extends Component {
                 />
               </p>
             </div> */}
+
+            <div className="field" style={{ width: "100px" }}>
+              <p className="control">
+                Tid Fra
+                <input
+                  className="input"
+                  type="text"
+                  id="alderFra"
+                  placeholder="Alder"
+                  value={this.state.alderFra}
+                  onChange={this.onInputChange}
+                />
+              </p>
+            </div>
+
+            <div className="field" style={{ width: "100px" }}>
+              <p className="control">
+                Tid Til
+                <input
+                  className="input"
+                  type="text"
+                  id="alderFra"
+                  placeholder="Alder"
+                  value={this.state.alderFra}
+                  onChange={this.onInputChange}
+                />
+              </p>
+            </div>
 
             <div className="field" style={{ width: "100px" }}>
               <p className="control">

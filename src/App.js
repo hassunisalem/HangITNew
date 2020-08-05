@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/Navbar";
@@ -12,6 +12,10 @@ import ForgotPasswordVerification from "./components/auth/ForgotPasswordVerifica
 import ChangePassword from "./components/auth/ChangePassword";
 import ChangePasswordConfirm from "./components/auth/ChangePasswordConfirm";
 import Welcome from "./components/auth/Welcome";
+
+import { ThemeProvider, setTheme } from "styled-components";
+import { GlobalStyles } from "./components/GlobalStyles";
+import { lightTheme, darkTheme } from "./components/Theme";
 
 import "react-dates/initialize";
 import "react-dropdown/style.css";
@@ -30,6 +34,7 @@ library.add(faEdit);
 
 class App extends Component {
   state = {
+    theme: "light",
     isAuthenticated: false,
     isAuthenticating: true,
     user: null,
@@ -68,6 +73,12 @@ class App extends Component {
     this.setState({ isAuthenticating: false });
   }
 
+  themeToggler = () => {
+    this.state.theme === "light"
+      ? this.setState({ theme: "dark" })
+      : this.setState({ theme: "light" });
+  };
+
   render() {
     store.dispatch(ActionConstructer.setIsLogged(false));
     if (this.state.isAuthenticated) {
@@ -92,78 +103,95 @@ class App extends Component {
     }
     return (
       !this.state.isAuthenticating && (
-        <div className="App">
-          <Router>
-            <div>
-              <Navbar auth={authProps} />
-              <Switch>
-                <Route
-                  exact
-                  path="/"
-                  render={(props) => <Home {...props} auth={authProps} />}
-                />
-                <Route
-                  exact
-                  path="/products"
-                  render={(props) => <Products {...props} auth={authProps} />}
-                />
-                <Route
-                  exact
-                  path="/admin"
-                  render={(props) => (
-                    <ProductAdmin {...props} auth={authProps} />
-                  )}
-                />
-                <Route
-                  exact
-                  path="/login"
-                  render={(props) => <LogIn {...props} auth={authProps} />}
-                />
-                <Route
-                  exact
-                  path="/register"
-                  render={(props) => <Register {...props} auth={authProps} />}
-                />
-                <Route
-                  exact
-                  path="/forgotpassword"
-                  render={(props) => (
-                    <ForgotPassword {...props} auth={authProps} />
-                  )}
-                />
-                <Route
-                  exact
-                  path="/forgotpasswordverification"
-                  render={(props) => (
-                    <ForgotPasswordVerification {...props} auth={authProps} />
-                  )}
-                />
-                <Route
-                  exact
-                  path="/changepassword"
-                  render={(props) => (
-                    <ChangePassword {...props} auth={authProps} />
-                  )}
-                />
-                <Route
-                  exact
-                  path="/changepasswordconfirmation"
-                  render={(props) => (
-                    <ChangePasswordConfirm {...props} auth={authProps} />
-                  )}
-                />
+        <ThemeProvider
+          theme={this.state.theme === "light" ? lightTheme : darkTheme}
+        >
+          <>
+            <GlobalStyles />
+            <div className="App">
+              <button onClick={this.themeToggler}>Switch Theme</button>
+              <Router>
+                <div>
+                  <Navbar auth={authProps} />
+                  <Switch>
+                    <Route
+                      exact
+                      path="/"
+                      render={(props) => <Home {...props} auth={authProps} />}
+                    />
+                    <Route
+                      exact
+                      path="/products"
+                      render={(props) => (
+                        <Products {...props} auth={authProps} />
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/admin"
+                      render={(props) => (
+                        <ProductAdmin {...props} auth={authProps} />
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/login"
+                      render={(props) => <LogIn {...props} auth={authProps} />}
+                    />
+                    <Route
+                      exact
+                      path="/register"
+                      render={(props) => (
+                        <Register {...props} auth={authProps} />
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/forgotpassword"
+                      render={(props) => (
+                        <ForgotPassword {...props} auth={authProps} />
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/forgotpasswordverification"
+                      render={(props) => (
+                        <ForgotPasswordVerification
+                          {...props}
+                          auth={authProps}
+                        />
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/changepassword"
+                      render={(props) => (
+                        <ChangePassword {...props} auth={authProps} />
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/changepasswordconfirmation"
+                      render={(props) => (
+                        <ChangePasswordConfirm {...props} auth={authProps} />
+                      )}
+                    />
 
-                {charPage}
+                    {charPage}
 
-                <Route
-                  exact
-                  path="/welcome"
-                  render={(props) => <Welcome {...props} auth={authProps} />}
-                />
-              </Switch>
+                    <Route
+                      exact
+                      path="/welcome"
+                      render={(props) => (
+                        <Welcome {...props} auth={authProps} />
+                      )}
+                    />
+                  </Switch>
+                </div>
+              </Router>
             </div>
-          </Router>
-        </div>
+          </>
+        </ThemeProvider>
       )
     );
   }
