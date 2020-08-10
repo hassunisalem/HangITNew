@@ -5,6 +5,11 @@ import { Bar, Doughnut, Line } from "react-chartjs-2";
 import store from "../../store";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import Typography from "@material-ui/core/Typography";
+
+import GridLayout from "react-grid-layout";
+import { Responsive as ResponsiveGridLayout } from "react-grid-layout";
+
 import "react-dates/lib/css/_datepicker.css";
 import moment from "moment";
 
@@ -21,6 +26,7 @@ import * as ActionConstructer from "../../actions/ActionConstructer";
 
 import { registerLocale, setDefaultLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
+import { Container } from "aws-amplify-react";
 
 // import getVenues from "./getVenues";
 
@@ -588,36 +594,36 @@ class Chart extends Component {
 
   render() {
     const selectedOption = this.state.venues;
-
+    const layouts = [
+      { i: "a", x: 0, y: 0, w: 1, h: 2, static: true },
+      { i: "b", x: 1, y: 0, w: 6, h: 7, minW: 5, maxW: 30 },
+      { i: "c", x: 4, y: 0, w: 1, h: 2 },
+    ];
     return (
       <div
         className="all charts"
         style={{ textAlign: "left", height: 300, width: 600 }}
       >
-        <div
-          className="aldersfordeling chart"
-          style={{ textAlign: "left", height: 300, width: 650 }}
-        >
-          <Dropdown
-            value={selectedOption}
-            onChange={this._onSelect}
-            options={this.state.venues}
-          />
-          <br></br>
-          <DateRangePicker
-            startDate={this.state.startDate} // momentPropTypes.momentObj or null,
-            startDateId={"1"} // PropTypes.string.isRequired,
-            endDate={this.state.endDate} // momentPropTypes.momentObj or null,
-            endDateId={"2"} // PropTypes.string.isRequired,
-            onDatesChange={({ startDate, endDate }) =>
-              this.setState({ startDate, endDate })
-            } // PropTypes.func.isRequired,
-            focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
-            onFocusChange={(focusedInput) => this.setState({ focusedInput })} // PropTypes.func.isRequired,
-            isOutsideRange={() => false}
-          />
-          <form onSubmit={this.handleSubmit}>
-            {/* <div className="field" style={{ width: "100px" }}>
+        <Dropdown
+          value={selectedOption}
+          onChange={this._onSelect}
+          options={this.state.venues}
+        />
+        <br></br>
+        <DateRangePicker
+          startDate={this.state.startDate} // momentPropTypes.momentObj or null,
+          startDateId={"1"} // PropTypes.string.isRequired,
+          endDate={this.state.endDate} // momentPropTypes.momentObj or null,
+          endDateId={"2"} // PropTypes.string.isRequired,
+          onDatesChange={({ startDate, endDate }) =>
+            this.setState({ startDate, endDate })
+          } // PropTypes.func.isRequired,
+          focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+          onFocusChange={(focusedInput) => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+          isOutsideRange={() => false}
+        />
+        <form onSubmit={this.handleSubmit}>
+          {/* <div className="field" style={{ width: "100px" }}>
               <p className="control">
                 Dato fra
                 <input
@@ -644,85 +650,95 @@ class Chart extends Component {
               </p>
             </div> */}
 
-            <div className="field" style={{ width: "100px" }}>
-              <p className="control">
-                Tid Fra
-                <input
-                  className="input"
-                  type="text"
-                  id="alderFra"
-                  placeholder="Alder"
-                  value={this.state.alderFra}
-                  onChange={this.onInputChange}
-                />
-              </p>
-            </div>
+          <div className="field" style={{ width: "100px" }}>
+            <p className="control">
+              Tid Fra
+              <input
+                className="input"
+                type="text"
+                id="alderFra"
+                placeholder="Alder"
+                value={this.state.alderFra}
+                onChange={this.onInputChange}
+              />
+            </p>
+          </div>
 
-            <div className="field" style={{ width: "100px" }}>
-              <p className="control">
-                Tid Til
-                <input
-                  className="input"
-                  type="text"
-                  id="alderFra"
-                  placeholder="Alder"
-                  value={this.state.alderFra}
-                  onChange={this.onInputChange}
-                />
-              </p>
-            </div>
+          <div className="field" style={{ width: "100px" }}>
+            <p className="control">
+              Tid Til
+              <input
+                className="input"
+                type="text"
+                id="alderFra"
+                placeholder="Alder"
+                value={this.state.alderFra}
+                onChange={this.onInputChange}
+              />
+            </p>
+          </div>
 
-            <div className="field" style={{ width: "100px" }}>
-              <p className="control">
-                Alder fra
-                <input
-                  className="input"
-                  type="text"
-                  id="alderFra"
-                  placeholder="Alder"
-                  value={this.state.alderFra}
-                  onChange={this.onInputChange}
-                />
-              </p>
-            </div>
+          <div className="field" style={{ width: "100px" }}>
+            <p className="control">
+              Alder fra
+              <input
+                className="input"
+                type="text"
+                id="alderFra"
+                placeholder="Alder"
+                value={this.state.alderFra}
+                onChange={this.onInputChange}
+              />
+            </p>
+          </div>
 
-            <div className="field" style={{ width: "100px" }}>
-              <p className="control">
-                Alder til
-                <input
-                  className="input"
-                  type="text"
-                  id="alderTil"
-                  placeholder="Alder"
-                  value={this.state.alderTil}
-                  onChange={this.onInputChange}
-                />
-              </p>
-            </div>
+          <div className="field" style={{ width: "100px" }}>
+            <p className="control">
+              Alder til
+              <input
+                className="input"
+                type="text"
+                id="alderTil"
+                placeholder="Alder"
+                value={this.state.alderTil}
+                onChange={this.onInputChange}
+              />
+            </p>
+          </div>
 
-            <div className="field" style={{ width: "100px" }}>
-              <p className="control">
-                Køn
-                <input
-                  className="input"
-                  type="text"
-                  id="gender"
-                  placeholder="køn (M eller F)"
-                  value={this.state.gender}
-                  onChange={this.onInputChange}
-                />
-              </p>
-            </div>
+          <div className="field" style={{ width: "100px" }}>
+            <p className="control">
+              Køn
+              <input
+                className="input"
+                type="text"
+                id="gender"
+                placeholder="køn (M eller F)"
+                value={this.state.gender}
+                onChange={this.onInputChange}
+              />
+            </p>
+          </div>
 
-            <div className="field">
-              <p className="control">
-                <button className="button is-success">Hent Data</button>
-              </p>
-            </div>
-          </form>
-          <br></br>
+          <div className="field">
+            <p className="control">
+              <button className="button is-success">Hent Data</button>
+            </p>
+          </div>
+        </form>
+        <br></br>
+        <GridLayout
+          className="layout"
+          layout={layouts}
+          cols={12}
+          rowHeight={30}
+          width={1200}
+        >
           <div
+            key="b"
             style={{
+              datagrid: { x: 10, y: 10, w: 10, h: 20 },
+              color: "red",
               position: "absolute",
               width: 600,
               height: 500,
@@ -764,6 +780,7 @@ class Chart extends Component {
             />
           </div>
           <div
+            key="b"
             style={{
               position: "absolute",
               width: 250,
@@ -773,6 +790,7 @@ class Chart extends Component {
             }}
           >
             <div
+              key="b"
               style={{
                 position: "absolute",
                 width: 250,
@@ -808,6 +826,7 @@ class Chart extends Component {
             />
           </div>
           <div
+            key="b"
             style={{
               position: "absolute",
               width: 500,
@@ -849,59 +868,61 @@ class Chart extends Component {
               }}
             />
           </div>
-        </div>
-        <div
-          style={{
-            height: 210,
-            width: 210,
-            position: "absolute",
-            top: "140px",
-            left: "470px",
-          }}
-        >
+
           <div
+            key="b"
             style={{
-              width: 400,
-              height: 300,
+              height: 210,
+              width: 210,
               position: "absolute",
-              top: "-50px",
-              left: "200px",
+              top: "140px",
+              left: "470px",
             }}
           >
-            <Bar
-              data={this.getPatronChart}
-              options={{
-                responsive: true,
-                title: {
-                  display: this.props.displayTitle,
-                  text: "Stamkunder",
-                  fontSize: 15,
-                },
-                legend: {
-                  display: false,
-                  position: this.props.legendPosition,
-                },
-                layout: {
-                  padding: {
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                  },
-                },
-                scales: {
-                  yAxes: [
-                    {
-                      ticks: {
-                        beginAtZero: true,
-                      },
-                    },
-                  ],
-                },
+            <div
+              style={{
+                width: 400,
+                height: 300,
+                position: "absolute",
+                top: "-50px",
+                left: "200px",
               }}
-            />
+            >
+              <Bar
+                data={this.getPatronChart}
+                options={{
+                  responsive: true,
+                  title: {
+                    display: this.props.displayTitle,
+                    text: "Stamkunder",
+                    fontSize: 15,
+                  },
+                  legend: {
+                    display: false,
+                    position: this.props.legendPosition,
+                  },
+                  layout: {
+                    padding: {
+                      left: 0,
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                    },
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        ticks: {
+                          beginAtZero: true,
+                        },
+                      },
+                    ],
+                  },
+                }}
+              />
+            </div>
           </div>
-        </div>
+        </GridLayout>
       </div>
     );
   }

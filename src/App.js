@@ -13,7 +13,7 @@ import ChangePassword from "./components/auth/ChangePassword";
 import ChangePasswordConfirm from "./components/auth/ChangePasswordConfirm";
 import Welcome from "./components/auth/Welcome";
 
-import { ThemeProvider, setTheme } from "styled-components";
+import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./components/GlobalStyles";
 import { lightTheme, darkTheme } from "./components/Theme";
 
@@ -34,7 +34,6 @@ library.add(faEdit);
 
 class App extends Component {
   state = {
-    theme: "light",
     isAuthenticated: false,
     isAuthenticating: true,
     user: null,
@@ -54,6 +53,7 @@ class App extends Component {
 
       this.setAuthStatus(true);
 
+      store.dispatch(ActionConstructer.setDarkModeFlag("light"));
       const user = await Auth.currentAuthenticatedUser();
       this.setUser(user);
       console.log(session);
@@ -68,15 +68,17 @@ class App extends Component {
         store.dispatch(ActionConstructer.setIsLogged(false));
         console.log(error);
       }
+      store.dispatch(ActionConstructer.setDarkModeFlag("light"));
     }
 
     this.setState({ isAuthenticating: false });
   }
 
   themeToggler = () => {
-    this.state.theme === "light"
-      ? this.setState({ theme: "dark" })
-      : this.setState({ theme: "light" });
+    store.getState().darkMode === "light"
+      ? store.dispatch(ActionConstructer.setDarkModeFlag("dark"))
+      : store.dispatch(ActionConstructer.setDarkModeFlag("light"));
+    this.forceUpdate();
   };
 
   render() {
@@ -104,7 +106,7 @@ class App extends Component {
     return (
       !this.state.isAuthenticating && (
         <ThemeProvider
-          theme={this.state.theme === "light" ? lightTheme : darkTheme}
+          theme={store.getState().darkMode === "light" ? lightTheme : darkTheme}
         >
           <>
             <GlobalStyles />

@@ -1,7 +1,14 @@
 import React, { Component } from "react";
+
 import { Auth } from "aws-amplify";
+
 import store from "../store";
 import * as ActionConstructer from "../actions/ActionConstructer";
+
+import { ThemeProvider } from "styled-components";
+import { GlobalStyles } from "../components/GlobalStyles";
+import { lightTheme, darkTheme } from "../components/Theme";
+
 // {this.props.auth.isAuthenticated && this.props.auth.user && (
 // )}
 

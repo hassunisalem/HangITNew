@@ -15,3 +15,11 @@ export function setIsLogged(loggedIn) {
     loggedIn,
   };
 }
+
+export function setDarkModeFlag(darkMode) {
+  return {
+    type: actions.DARK,
+
+    darkMode,
+  };
+}
