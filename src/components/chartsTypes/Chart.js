@@ -5,7 +5,8 @@ import { Bar, Doughnut, Line } from "react-chartjs-2";
 import store from "../../store";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/";
+import { Grid, Paper } from "@material-ui/core/";
 
 import GridLayout from "react-grid-layout";
 import { Responsive as ResponsiveGridLayout } from "react-grid-layout";
@@ -22,6 +23,8 @@ import Dropdown from "react-dropdown";
 
 import { Auth } from "aws-amplify";
 
+import TimeField from "react-simple-timefield";
+
 import * as ActionConstructer from "../../actions/ActionConstructer";
 
 import { registerLocale, setDefaultLocale } from "react-datepicker";
@@ -29,6 +32,17 @@ import es from "date-fns/locale/es";
 import { Container } from "aws-amplify-react";
 
 // import getVenues from "./getVenues";
+const useStyles = makeStyles((theme) => ({
+  grid: {
+    width: "100%",
+    margin: "0px",
+  },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: "center",
+    color: "theme. palette.succes.dark",
+  },
+}));
 
 registerLocale("es", es);
 
@@ -43,6 +57,8 @@ class Chart extends Component {
     startDate: moment().subtract(10, "years"),
     endDate: moment(),
 
+    startTime: moment().subtract(6, "hours").format("hh:mm:s"),
+    endTime: moment().format("hh:mm:s"),
     // moment().format("YYYY-MM-DD hh-mm-ss")
 
     alderFra: "1",
@@ -69,25 +85,59 @@ class Chart extends Component {
   };
 
   async componentDidMount() {
-    var datoFra = this.state.startDate.format("YYYY-MM-DD hh:mm:ss");
-    var datoTil = this.state.endDate.format("YYYY-MM-DD hh:mm:ss");
+    this.onStartTimeChange = this.onStartTimeChange.bind(this);
+    this.onEndTimeChange = this.onEndTimeChange.bind(this);
+
+    var datoFra = this.state.startDate.format("YYYY-MM-DD ");
+    var datoTil = this.state.endDate.format("YYYY-MM-DD ");
+    var tidFra = this.state.startTime;
+    var tidTil = this.state.endTime;
     var alderFra = this.state.alderFra;
     var alderTil = this.state.alderTil;
     var gender = this.state.gender;
     var venue = this.state.selectedOption.value;
 
     this.fetchVenues("Customer_0");
-    this.fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
-    this.fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
-    this.fetchDurationOfStay(
+    this.fetchVisitedUsers(
       datoFra,
       datoTil,
+      tidFra,
+      tidTil,
       alderFra,
       alderTil,
       gender,
       venue
     );
-    this.fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
+    this.fetchPatronUsers(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    this.fetchDurationOfStay(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    this.fetchVistingUsers(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
   }
 
   // 2020-01-1%2022:23:00
@@ -131,14 +181,25 @@ class Chart extends Component {
       });
   }
 
-  fetchVisitedUsers(startDate, endDate, alderFra, alderTil, gender, venue) {
+  fetchVisitedUsers(
+    startDate,
+    endDate,
+    tidFra,
+    tidTil,
+    alderFra,
+    alderTil,
+    gender,
+    venue
+  ) {
     var URL =
       "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=retrieval&customerId=Customer_0&venueId=" +
       venue +
       "&timeStampStart=" +
       startDate +
+      tidFra +
       "&timeStampEnd=" +
       endDate +
+      tidTil +
       "&ageEnd=" +
       alderTil +
       "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
@@ -173,14 +234,25 @@ class Chart extends Component {
       });
   }
 
-  fetchPatronUsers(startDate, endDate, alderFra, alderTil, gender, venue) {
+  fetchPatronUsers(
+    startDate,
+    endDate,
+    tidFra,
+    tidTil,
+    alderFra,
+    alderTil,
+    gender,
+    venue
+  ) {
     var URL =
       "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=" +
       venue +
       "&timeStampStart=" +
       startDate +
+      tidFra +
       "&timeStampEnd=" +
       endDate +
+      tidTil +
       "&ageEnd=" +
       alderTil +
       "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
@@ -215,14 +287,25 @@ class Chart extends Component {
       });
   }
 
-  fetchDurationOfStay(startDate, endDate, alderFra, alderTil, gender, venue) {
+  fetchDurationOfStay(
+    startDate,
+    endDate,
+    tidFra,
+    tidTil,
+    alderFra,
+    alderTil,
+    gender,
+    venue
+  ) {
     var URL =
       "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=" +
       venue +
       "&timeStampStart=" +
       startDate +
+      tidFra +
       "&timeStampEnd=" +
       endDate +
+      tidTil +
       "&ageEnd=" +
       alderTil +
       "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
@@ -257,14 +340,25 @@ class Chart extends Component {
       });
   }
 
-  fetchVistingUsers(startDate, endDate, alderFra, alderTil, gender, venue) {
+  fetchVistingUsers(
+    startDate,
+    endDate,
+    tidFra,
+    tidTil,
+    alderFra,
+    alderTil,
+    gender,
+    venue
+  ) {
     var URL =
       "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer_0&venueId=" +
       venue +
       "&timeStampStart=" +
       startDate +
+      tidFra +
       "&timeStampEnd=" +
       endDate +
+      tidTil +
       "&ageEnd=" +
       alderTil +
       "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
@@ -408,7 +502,7 @@ class Chart extends Component {
       let colors = ["rgba(217, 39, 39, 1)", "rgba(75,192,192,0.4)"];
       data.datasets.forEach((set, i) => {
         set.backgroundColor = colors[i];
-        set.borderColor = "white";
+        set.borderColor = "red";
         set.borderWidth = 2;
         set.label = "";
         set.fill = false;
@@ -436,25 +530,56 @@ class Chart extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
 
-    var datoFra = this.state.startDate.format("YYYY-MM-DD hh:mm:ss");
-    var datoTil = this.state.endDate.format("YYYY-MM-DD hh:mm:ss");
+    var datoFra = this.state.startDate.format("YYYY-MM-DD ");
+    var datoTil = this.state.endDate.format("YYYY-MM-DD ");
+    var tidFra = this.state.startTime;
+    var tidTil = this.state.endTime;
     var alderFra = this.state.alderFra;
     var alderTil = this.state.alderTil;
     var gender = this.state.gender;
     var venue = this.state.selectedOption.value;
 
     this.fetchVenues("Customer_0");
-    this.fetchVisitedUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
-    this.fetchPatronUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
-    this.fetchDurationOfStay(
+    this.fetchVisitedUsers(
       datoFra,
       datoTil,
+      tidFra,
+      tidTil,
       alderFra,
       alderTil,
       gender,
       venue
     );
-    this.fetchVistingUsers(datoFra, datoTil, alderFra, alderTil, gender, venue);
+    this.fetchPatronUsers(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    this.fetchDurationOfStay(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    this.fetchVistingUsers(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
   };
   // "customerId = " + customerId + "&venueId= " + venueId + "&venueId= " + venueId;
 
@@ -475,6 +600,15 @@ class Chart extends Component {
 
   
    */
+
+  onStartTimeChange(event, startTime) {
+    this.setState({ startTime });
+  }
+
+  onEndTimeChange(event, endTime) {
+    this.setState({ endTime });
+  }
+
   sortAgeMale() {
     var aldersGruppe = [];
     var fra = 15;
@@ -593,7 +727,10 @@ class Chart extends Component {
   }
 
   render() {
+    const classes = useStyles();
     const selectedOption = this.state.venues;
+    const startTime = this.state.startTime;
+    const endTime = this.state.endTime;
     const layouts = [
       { i: "a", x: 0, y: 0, w: 1, h: 2, static: true },
       { i: "b", x: 1, y: 0, w: 6, h: 7, minW: 5, maxW: 30 },
@@ -622,6 +759,14 @@ class Chart extends Component {
           onFocusChange={(focusedInput) => this.setState({ focusedInput })} // PropTypes.func.isRequired,
           isOutsideRange={() => false}
         />
+        <br></br>
+        Tid Fra
+        <br></br>
+        <TimeField value={startTime} onChange={this.onStartTimeChange} />
+        <br></br>
+        Tid Til
+        <br></br>
+        <TimeField value={endTime} onChange={this.onEndTimeChange} />
         <form onSubmit={this.handleSubmit}>
           {/* <div className="field" style={{ width: "100px" }}>
               <p className="control">
@@ -649,34 +794,6 @@ class Chart extends Component {
                 />
               </p>
             </div> */}
-
-          <div className="field" style={{ width: "100px" }}>
-            <p className="control">
-              Tid Fra
-              <input
-                className="input"
-                type="text"
-                id="alderFra"
-                placeholder="Alder"
-                value={this.state.alderFra}
-                onChange={this.onInputChange}
-              />
-            </p>
-          </div>
-
-          <div className="field" style={{ width: "100px" }}>
-            <p className="control">
-              Tid Til
-              <input
-                className="input"
-                type="text"
-                id="alderFra"
-                placeholder="Alder"
-                value={this.state.alderFra}
-                onChange={this.onInputChange}
-              />
-            </p>
-          </div>
 
           <div className="field" style={{ width: "100px" }}>
             <p className="control">
