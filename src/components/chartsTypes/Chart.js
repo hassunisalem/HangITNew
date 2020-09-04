@@ -32,7 +32,7 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 import { registerLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
 
-import { CardBody, Card } from "reactstrap";
+import { CardBody, Card, Row, Col } from "reactstrap";
 // import { Container } from "aws-amplify-react";
 
 // import getVenues from "./getVenues";
@@ -792,7 +792,7 @@ class Chart extends Component {
     return (
       <div
         className="all charts"
-        style={{ textAlign: "left", height: 300, width: 600 }}
+        //  style={{ textAlign: "left", height: 300, width: 600 }}
       >
         <Dropdown
           value={selectedOption}
@@ -904,146 +904,167 @@ class Chart extends Component {
           </div>
         </form>
         <br></br>
-        <div
-          // key="b"
-          style={{
-            datagrid: { x: 10, y: 10, w: 10, h: 20 },
-            color: "red",
-            position: "absolute",
-            width: 600,
-            height: 500,
-            top: "473px",
-            left: "660px",
-          }}
-        >
-          <Card>
-            <CardBody>
-              <div className="chart-area">
-                <Bar
-                  data={this.getVistedChart}
-                  options={{
-                    responsive: true,
-                    title: {
-                      display: this.props.displayTitle,
-                      text: "Besøgte Gæster",
-                      fontSize: 15,
-                    },
-                    legend: {
-                      display: false,
-                      position: this.props.legendPosition,
-                    },
-                    layout: {
-                      padding: {
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
+        <Row>
+          <Col xs={12} md={4}>
+            {/* <div
+              // key="b"
+              style={{
+                datagrid: { x: 10, y: 10, w: 10, h: 20 },
+                color: "red",
+                position: "absolute",
+                width: 600,
+                height: 500,
+                top: "473px",
+                left: "660px",
+              }}
+            > */}
+            <Card className="card-chart">
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={this.getVistedChart}
+                    options={{
+                      responsive: true,
+                      title: {
+                        display: this.props.displayTitle,
+                        text: "Besøgte Gæster",
+                        fontSize: 15,
                       },
-                    },
-                    scales: {
-                      yAxes: [
-                        {
-                          ticks: {
-                            beginAtZero: true,
-                          },
+                      legend: {
+                        display: false,
+                        position: this.props.legendPosition,
+                      },
+                      layout: {
+                        padding: {
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
                         },
-                      ],
-                    },
-                  }}
-                />
-              </div>
-            </CardBody>
-          </Card>
-        </div>
-        <div
-          // key="b"
-          style={{
-            datagrid: { x: 10, y: 10, w: 10, h: 20 },
-            color: "red",
-            position: "absolute",
-            width: 600,
-            height: 500,
-            top: "873px",
-            left: "260px",
-          }}
-        >
-          <Bar
-            data={this.getAgeDistChart}
-            options={{
-              responsive: true,
-              title: {
-                display: this.props.displayTitle,
-                text: "Aldersfordeling",
-                fontSize: 15,
-              },
-              legend: {
-                display: false,
-                position: this.props.legendPosition,
-              },
-              layout: {
-                padding: {
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                },
-              },
-              scales: {
-                yAxes: [
-                  {
-                    ticks: {
-                      beginAtZero: true,
-                    },
-                  },
-                ],
-              },
-            }}
-          />
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            width: 250,
-            height: 100,
-            top: "290px",
-            left: "780px",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              width: 250,
-              height: 100,
-              top: "68px",
-              left: "115px",
-            }}
-          >
-            {this.state.visitingUsers.total}
-          </div>
-          <Doughnut
-            data={this.getVisitingChart}
-            options={{
-              responsive: true,
-              title: {
-                display: this.props.displayTitle,
-                text: "Nuværende Gæster",
-                fontSize: 15,
-              },
-              legend: {
-                display: false,
-                position: this.props.legendPosition,
-              },
-              layout: {
-                padding: {
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                },
-              },
-            }}
-          />
-        </div>
+                      },
+                      scales: {
+                        yAxes: [
+                          {
+                            ticks: {
+                              beginAtZero: true,
+                            },
+                          },
+                        ],
+                      },
+                    }}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+            {/* </div> */}
+          </Col>
+
+          <Col xs={12} md={4}>
+            {/* <div
+              // key="b"
+              style={{
+                datagrid: { x: 10, y: 10, w: 10, h: 20 },
+                color: "red",
+                position: "absolute",
+                width: 600,
+                height: 500,
+                top: "873px",
+                left: "260px",
+              }}
+            > */}
+            <Card className="card-chart">
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={this.getAgeDistChart}
+                    options={{
+                      responsive: true,
+                      title: {
+                        display: this.props.displayTitle,
+                        text: "Aldersfordeling",
+                        fontSize: 15,
+                      },
+                      legend: {
+                        display: false,
+                        position: this.props.legendPosition,
+                      },
+                      layout: {
+                        padding: {
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                        },
+                      },
+                      scales: {
+                        yAxes: [
+                          {
+                            ticks: {
+                              beginAtZero: true,
+                            },
+                          },
+                        ],
+                      },
+                    }}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+            {/* </div> */}
+          </Col>
+          <Col xs={12} md={4}>
+            {/* <div
+              style={{
+                position: "absolute",
+                width: 250,
+                height: 100,
+                top: "290px",
+                left: "780px",
+              }}
+            > */}
+            <Card className="card-chart">
+              <CardBody>
+                <div className="chart-area">
+                  <div
+                    style={{
+                      position: "absolute",
+                      width: 250,
+                      height: 100,
+                      top: "68px",
+                      left: "115px",
+                    }}
+                  >
+                    {this.state.visitingUsers.total}
+                  </div>
+                  <Doughnut
+                    data={this.getVisitingChart}
+                    options={{
+                      responsive: true,
+                      title: {
+                        display: this.props.displayTitle,
+                        text: "Nuværende Gæster",
+                        fontSize: 15,
+                      },
+                      legend: {
+                        display: false,
+                        position: this.props.legendPosition,
+                      },
+                      layout: {
+                        padding: {
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+            {/* </div> */}
+          </Col>
+        </Row>
         <div
           style={{
             position: "absolute",
