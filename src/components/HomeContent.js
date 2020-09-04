@@ -1,10 +1,10 @@
 import React from "react";
 
-import { ThemeProvider } from "styled-components";
-import { GlobalStyles } from "../components/GlobalStyles";
-import { lightTheme, darkTheme } from "../components/Theme";
+// import { ThemeProvider } from "styled-components";
+// import { GlobalStyles } from "../components/GlobalStyles";
+// import { lightTheme, darkTheme } from "../components/Theme";
 
-import store from "../store";
+// import store from "../store";
 
 export default function HomeContent() {
   return (

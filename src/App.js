@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/Navbar";
@@ -21,7 +21,7 @@ import "react-dates/initialize";
 import "react-dropdown/style.css";
 
 import { Auth } from "aws-amplify";
-import { withAuthenticator } from "aws-amplify-react";
+// import { withAuthenticator } from "aws-amplify-react";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";

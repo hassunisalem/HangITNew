@@ -1,53 +1,59 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 
-import datas from "../DummyData.json";
+// import datas from "../DummyData.json";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import store from "../../store";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { makeStyles } from "@material-ui/core/";
-import { Grid, Paper } from "@material-ui/core/";
+// import { makeStyles } from "@material-ui/core/";
+// import { Grid, Paper } from "@material-ui/core/";
 
-import GridLayout from "react-grid-layout";
-import { Responsive as ResponsiveGridLayout } from "react-grid-layout";
+// import GridLayout from "react-grid-layout";
+// import { Responsive as ResponsiveGridLayout } from "react-grid-layout";
 
 import "react-dates/lib/css/_datepicker.css";
 import moment from "moment";
 
-import calender from "../Calender";
+// import calender from "../Calender";
 import { DateRangePicker } from "react-dates";
 
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 
 import Dropdown from "react-dropdown";
 
-import { Auth } from "aws-amplify";
+// import { Auth } from "aws-amplify";
 
 import TimeField from "react-simple-timefield";
 
-import * as ActionConstructer from "../../actions/ActionConstructer";
+// import * as ActionConstructer from "../../actions/ActionConstructer";
 
-import { registerLocale, setDefaultLocale } from "react-datepicker";
+import ProgressBar from "react-bootstrap/ProgressBar";
+
+import { registerLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
-import { Container } from "aws-amplify-react";
+
+import { CardBody, Card } from "reactstrap";
+// import { Container } from "aws-amplify-react";
 
 // import getVenues from "./getVenues";
-const useStyles = makeStyles((theme) => ({
-  grid: {
-    width: "100%",
-    margin: "0px",
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: "center",
-    color: "theme. palette.succes.dark",
-  },
-}));
+// const useStyles = makeStyles((theme) => ({
+//   grid: {
+//     width: "100%",
+//     margin: "0px",
+//   },
+//   paper: {
+//     padding: theme.spacing(2),
+//     textAlign: "center",
+//     color: "theme. palette.succes.dark",
+//   },
+// }));
 
 registerLocale("es", es);
 
 class Chart extends Component {
   state = {
+    capacity: [],
+
     venues: [],
 
     selectedOption: "1",
@@ -82,9 +88,13 @@ class Chart extends Component {
       datasets: [],
       total: [],
     },
+    ageDist: {
+      labels: [],
+      datasets: [],
+    },
   };
 
-  async componentDidMount() {
+  async componentWillMount() {
     this.onStartTimeChange = this.onStartTimeChange.bind(this);
     this.onEndTimeChange = this.onEndTimeChange.bind(this);
 
@@ -97,7 +107,8 @@ class Chart extends Component {
     var gender = this.state.gender;
     var venue = this.state.selectedOption.value;
 
-    this.fetchVenues("Customer_0");
+    this.fetchCapacity(venue);
+    this.fetchVenues("Customer_1");
     this.fetchVisitedUsers(
       datoFra,
       datoTil,
@@ -156,12 +167,36 @@ class Chart extends Component {
       this.state.alderFra;
  */
 
+  fetchCapacity(venueId) {
+    var URL =
+      "https://it403ry3h6.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_1&venueId=" +
+      venueId;
+
+    console.log(URL);
+
+    fetch(URL, {
+      headers: {
+        // "Content-Type": "application/json",
+        // "Access-Control-Allow-Origin": "http://localhost:3000/chart",
+        Authorization: store.getState().IdToken,
+      },
+      mode: "cors",
+    })
+      .then((response) => response.json())
+      .then((repos) => {
+        this.setState({
+          capacity: repos[0].capacity,
+        });
+      });
+    console.log(this.state.capacity);
+  }
+
   fetchVenues(customerId) {
     var URL =
       "https://atvetw1fud.execute-api.eu-central-1.amazonaws.com/dev?customerId=" +
       customerId;
 
-    console.log(URL);
+    // console.log(URL);
 
     fetch(URL, {
       headers: {
@@ -177,7 +212,7 @@ class Chart extends Component {
           venues: repos.VenueId,
         });
 
-        console.log(this.state.venues);
+        // console.log(this.state.venues);
       });
   }
 
@@ -192,7 +227,7 @@ class Chart extends Component {
     venue
   ) {
     var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=retrieval&customerId=Customer_0&venueId=" +
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=retrieval&customerId=Customer_1&venueId=" +
       venue +
       "&timeStampStart=" +
       startDate +
@@ -207,7 +242,7 @@ class Chart extends Component {
       "&ageStart=" +
       alderFra;
 
-    console.log(URL);
+    // console.log(URL);
 
     fetch(URL, {
       headers: {
@@ -230,7 +265,7 @@ class Chart extends Component {
           },
         });
 
-        console.log(this.state.vistedUsers);
+        //   console.log(this.state.vistedUsers);
       });
   }
 
@@ -245,7 +280,7 @@ class Chart extends Component {
     venue
   ) {
     var URL =
-      "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=" +
+      "https://lrsik6gsgh.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_1&venueId=" +
       venue +
       "&timeStampStart=" +
       startDate +
@@ -260,7 +295,7 @@ class Chart extends Component {
       "&ageStart=" +
       alderFra;
 
-    console.log(URL);
+    // console.log(URL);
 
     fetch(URL, {
       headers: {
@@ -283,7 +318,7 @@ class Chart extends Component {
           },
         });
 
-        console.log(this.state.patronUsers);
+        //  console.log(this.state.patronUsers);
       });
   }
 
@@ -298,7 +333,7 @@ class Chart extends Component {
     venue
   ) {
     var URL =
-      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_0&venueId=" +
+      "https://ljkp2u0md2.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_1&venueId=" +
       venue +
       "&timeStampStart=" +
       startDate +
@@ -340,7 +375,7 @@ class Chart extends Component {
       });
   }
 
-  fetchVistingUsers(
+  fetchAgeDist(
     startDate,
     endDate,
     tidFra,
@@ -351,7 +386,7 @@ class Chart extends Component {
     venue
   ) {
     var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer_0&venueId=" +
+      "https://k7mb52gfg0.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_1&venueId=" +
       venue +
       "&timeStampStart=" +
       startDate +
@@ -378,6 +413,59 @@ class Chart extends Component {
     })
       .then((response) => response.json())
       .then((repos) => {
+        this.setState({
+          ageDist: {
+            labels: repos.x,
+            datasets: [
+              {
+                data: repos.y,
+              },
+            ],
+          },
+        });
+
+        console.log(this.state.durationOfStay);
+      });
+  }
+
+  fetchVistingUsers(
+    startDate,
+    endDate,
+    tidFra,
+    tidTil,
+    alderFra,
+    alderTil,
+    gender,
+    venue
+  ) {
+    var URL =
+      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/dev?action=delivery&customerId=Customer_1&venueId=" +
+      venue +
+      "&timeStampStart=" +
+      startDate +
+      tidFra +
+      "&timeStampEnd=" +
+      endDate +
+      tidTil +
+      "&ageEnd=" +
+      alderTil +
+      "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
+      gender +
+      "&ageStart=" +
+      alderFra;
+
+    // console.log(URL);
+
+    fetch(URL, {
+      headers: {
+        // "Content-Type": "application/json",
+        // "Access-Control-Allow-Origin": "http://localhost:3000/chart",
+        Authorization: store.getState().IdToken,
+      },
+      mode: "cors",
+    })
+      .then((response) => response.json())
+      .then((repos) => {
         if (repos.y != null) {
           this.setState({
             visitingUsers: {
@@ -392,7 +480,7 @@ class Chart extends Component {
           });
         }
 
-        console.log(this.state.visitingUsers);
+        //  console.log(this.state.visitingUsers);
       });
   }
 
@@ -496,6 +584,37 @@ class Chart extends Component {
     return data;
   };
 
+  getAgeDistChart = () => {
+    const data = this.state.visitingUsers;
+    if (data.datasets) {
+      let colors = ["rgba(217, 39, 39, 1)", "rgba(75,192,192,0.4)"];
+      data.datasets.forEach((set, i) => {
+        set.backgroundColor = colors[i];
+        set.borderColor = "red";
+        set.borderWidth = 2;
+        set.label = "";
+        set.fill = false;
+        set.lineTension = 0.1;
+        set.backgroundColor = "rgba(75,192,192,0.4)";
+        set.borderColor = "rgba(75,192,192,1)";
+        set.borderCapStyle = "round";
+        set.borderDash = [];
+        set.borderDashOffset = 0.0;
+        set.borderJoinStyle = "miter";
+        set.pointBorderColor = "rgba(75,192,192,1)";
+        set.pointBackgroundColor = "#fff";
+        set.pointBorderWidth = 1;
+        set.pointHoverRadius = 5;
+        set.pointHoverBackgroundColor = "rgba(75,192,192,1)";
+        set.pointHoverBorderColor = "rgba(220,220,220,1)";
+        set.pointHoverBorderWidth = 2;
+        set.pointRadius = 1;
+        set.pointHitRadius = 10;
+      });
+    }
+    return data;
+  };
+
   getVisitingChart = () => {
     const data = this.state.visitingUsers;
     if (data.datasets) {
@@ -528,7 +647,9 @@ class Chart extends Component {
   };
 
   handleSubmit = async (event) => {
-    event.preventDefault();
+    if (event != null) {
+      event.preventDefault();
+    }
 
     var datoFra = this.state.startDate.format("YYYY-MM-DD ");
     var datoTil = this.state.endDate.format("YYYY-MM-DD ");
@@ -539,7 +660,7 @@ class Chart extends Component {
     var gender = this.state.gender;
     var venue = this.state.selectedOption.value;
 
-    this.fetchVenues("Customer_0");
+    this.fetchVenues("Customer_1");
     this.fetchVisitedUsers(
       datoFra,
       datoTil,
@@ -580,6 +701,16 @@ class Chart extends Component {
       gender,
       venue
     );
+    this.fetchAgeDist(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
   };
   // "customerId = " + customerId + "&venueId= " + venueId + "&venueId= " + venueId;
 
@@ -609,88 +740,8 @@ class Chart extends Component {
     this.setState({ endTime });
   }
 
-  sortAgeMale() {
-    var aldersGruppe = [];
-    var fra = 15;
-    var til = 16;
-    while (til < 62) {
-      aldersGruppe.push(this.getAgeMale(fra, til));
-      fra += 2;
-      til += 2;
-    }
-    return aldersGruppe;
-  }
-
-  sortAgeFemale() {
-    var aldersGruppe = [];
-    var fra = 15;
-    var til = 16;
-    while (til < 62) {
-      aldersGruppe.push(this.getAgeFemale(fra, til));
-      fra += 2;
-      til += 2;
-    }
-    return aldersGruppe;
-  }
-
-  getAgeMale(age1, age2) {
-    var count = [];
-    datas.map((person) => {
-      if (
-        age1 <= person.age &&
-        person.age <= age2 &&
-        person.gender === "male"
-      ) {
-        count.push(person.age);
-      }
-    });
-
-    return count.length;
-  }
-
-  getAgeFemale(age1, age2) {
-    var count = [];
-    datas.map((person) => {
-      if (
-        age1 <= person.age &&
-        person.age <= age2 &&
-        person.gender === "female"
-      ) {
-        count.push(person.age);
-      }
-    });
-
-    return count.length;
-  }
-
-  getGenderMale() {
-    var list = [];
-    datas.map((person) => {
-      if (person.gender === "male") {
-        list.push(person);
-      }
-    });
-    return list.length;
-  }
-  getRegistration(month) {
-    var count = [];
-    datas.map((person) => {
-      if (month === person.registered.substring(5, 7)) {
-        count.push(person);
-      }
-    });
-
-    return count.length;
-  }
-
-  getGenderFemale() {
-    var list = [];
-    datas.map((person) => {
-      if (person.gender === "female") {
-        list.push(person);
-      }
-    });
-    return list.length;
+  xProcentOfY(total, capacity) {
+    return (total / capacity) * 100;
   }
 
   static defaultProps = {
@@ -709,7 +760,9 @@ class Chart extends Component {
 
   _onSelect = (selectedOption) => {
     this.setState({ selectedOption });
-    console.log(this.state.selectedOption.value);
+    //console.log(this.state.selectedOption.value);
+    this.handleSubmit();
+    this.fetchCapacity(selectedOption.value);
   };
 
   // setStartDate(date) {
@@ -727,15 +780,15 @@ class Chart extends Component {
   }
 
   render() {
-    const classes = useStyles();
+    // const classes = useStyles();
     const selectedOption = this.state.venues;
     const startTime = this.state.startTime;
     const endTime = this.state.endTime;
-    const layouts = [
-      { i: "a", x: 0, y: 0, w: 1, h: 2, static: true },
-      { i: "b", x: 1, y: 0, w: 6, h: 7, minW: 5, maxW: 30 },
-      { i: "c", x: 4, y: 0, w: 1, h: 2 },
-    ];
+    // const layouts = [
+    //   { i: "a", x: 0, y: 0, w: 1, h: 2, static: true },
+    //   { i: "b", x: 1, y: 0, w: 6, h: 7, minW: 5, maxW: 30 },
+    //   { i: "c", x: 4, y: 0, w: 1, h: 2 },
+    // ];
     return (
       <div
         className="all charts"
@@ -745,6 +798,13 @@ class Chart extends Component {
           value={selectedOption}
           onChange={this._onSelect}
           options={this.state.venues}
+        />
+        <br></br>
+        <ProgressBar
+          now={this.xProcentOfY(
+            this.state.visitingUsers.total,
+            this.state.capacity
+          )}
         />
         <br></br>
         <DateRangePicker
@@ -844,121 +904,213 @@ class Chart extends Component {
           </div>
         </form>
         <br></br>
-        <GridLayout
-          className="layout"
-          layout={layouts}
-          cols={12}
-          rowHeight={30}
-          width={1200}
+        <div
+          // key="b"
+          style={{
+            datagrid: { x: 10, y: 10, w: 10, h: 20 },
+            color: "red",
+            position: "absolute",
+            width: 600,
+            height: 500,
+            top: "473px",
+            left: "660px",
+          }}
         >
-          <div
-            key="b"
-            style={{
-              datagrid: { x: 10, y: 10, w: 10, h: 20 },
-              color: "red",
-              position: "absolute",
-              width: 600,
-              height: 500,
-              top: "473px",
-              left: "660px",
-            }}
-          >
-            <Bar
-              data={this.getVistedChart}
-              options={{
-                responsive: true,
-                title: {
-                  display: this.props.displayTitle,
-                  text: "Besøgte Gæster",
-                  fontSize: 15,
-                },
-                legend: {
-                  display: false,
-                  position: this.props.legendPosition,
-                },
-                layout: {
-                  padding: {
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                  },
-                },
-                scales: {
-                  yAxes: [
-                    {
-                      ticks: {
-                        beginAtZero: true,
+          <Card>
+            <CardBody>
+              <div className="chart-area">
+                <Bar
+                  data={this.getVistedChart}
+                  options={{
+                    responsive: true,
+                    title: {
+                      display: this.props.displayTitle,
+                      text: "Besøgte Gæster",
+                      fontSize: 15,
+                    },
+                    legend: {
+                      display: false,
+                      position: this.props.legendPosition,
+                    },
+                    layout: {
+                      padding: {
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
                       },
                     },
-                  ],
+                    scales: {
+                      yAxes: [
+                        {
+                          ticks: {
+                            beginAtZero: true,
+                          },
+                        },
+                      ],
+                    },
+                  }}
+                />
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+        <div
+          // key="b"
+          style={{
+            datagrid: { x: 10, y: 10, w: 10, h: 20 },
+            color: "red",
+            position: "absolute",
+            width: 600,
+            height: 500,
+            top: "873px",
+            left: "260px",
+          }}
+        >
+          <Bar
+            data={this.getAgeDistChart}
+            options={{
+              responsive: true,
+              title: {
+                display: this.props.displayTitle,
+                text: "Aldersfordeling",
+                fontSize: 15,
+              },
+              legend: {
+                display: false,
+                position: this.props.legendPosition,
+              },
+              layout: {
+                padding: {
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
                 },
-              }}
-            />
-          </div>
+              },
+              scales: {
+                yAxes: [
+                  {
+                    ticks: {
+                      beginAtZero: true,
+                    },
+                  },
+                ],
+              },
+            }}
+          />
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            width: 250,
+            height: 100,
+            top: "290px",
+            left: "780px",
+          }}
+        >
           <div
-            key="b"
             style={{
               position: "absolute",
               width: 250,
               height: 100,
-              top: "290px",
-              left: "780px",
+              top: "68px",
+              left: "115px",
             }}
           >
-            <div
-              key="b"
-              style={{
-                position: "absolute",
-                width: 250,
-                height: 100,
-                top: "68px",
-                left: "115px",
-              }}
-            >
-              {this.state.visitingUsers.total}
-            </div>
-            <Doughnut
-              data={this.getVisitingChart}
-              options={{
-                responsive: true,
-                title: {
-                  display: this.props.displayTitle,
-                  text: "Nuværende Gæster",
-                  fontSize: 15,
-                },
-                legend: {
-                  display: false,
-                  position: this.props.legendPosition,
-                },
-                layout: {
-                  padding: {
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                  },
-                },
-              }}
-            />
+            {this.state.visitingUsers.total}
           </div>
+          <Doughnut
+            data={this.getVisitingChart}
+            options={{
+              responsive: true,
+              title: {
+                display: this.props.displayTitle,
+                text: "Nuværende Gæster",
+                fontSize: 15,
+              },
+              legend: {
+                display: false,
+                position: this.props.legendPosition,
+              },
+              layout: {
+                padding: {
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                },
+              },
+            }}
+          />
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            width: 500,
+            height: 400,
+            top: "473px",
+            left: "140px",
+          }}
+        >
+          <Line
+            data={this.getDurationChart}
+            options={{
+              responsive: true,
+              title: {
+                display: this.props.displayTitle,
+                text: "Besøg Tid",
+                fontSize: 15,
+              },
+              legend: {
+                display: false,
+                position: this.props.legendPosition,
+              },
+              layout: {
+                padding: {
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                },
+              },
+              scales: {
+                yAxes: [
+                  {
+                    ticks: {
+                      beginAtZero: true,
+                    },
+                  },
+                ],
+              },
+            }}
+          />
+        </div>
+        <div
+          style={{
+            height: 210,
+            width: 210,
+            position: "absolute",
+            top: "140px",
+            left: "470px",
+          }}
+        >
           <div
-            key="b"
             style={{
+              width: 400,
+              height: 300,
               position: "absolute",
-              width: 500,
-              height: 400,
-              top: "473px",
-              left: "140px",
+              top: "-50px",
+              left: "200px",
             }}
           >
-            <Line
-              data={this.getDurationChart}
+            <Bar
+              data={this.getPatronChart}
               options={{
                 responsive: true,
                 title: {
                   display: this.props.displayTitle,
-                  text: "Besøg Tid",
+                  text: "Stamkunder",
                   fontSize: 15,
                 },
                 legend: {
@@ -985,61 +1137,7 @@ class Chart extends Component {
               }}
             />
           </div>
-
-          <div
-            key="b"
-            style={{
-              height: 210,
-              width: 210,
-              position: "absolute",
-              top: "140px",
-              left: "470px",
-            }}
-          >
-            <div
-              style={{
-                width: 400,
-                height: 300,
-                position: "absolute",
-                top: "-50px",
-                left: "200px",
-              }}
-            >
-              <Bar
-                data={this.getPatronChart}
-                options={{
-                  responsive: true,
-                  title: {
-                    display: this.props.displayTitle,
-                    text: "Stamkunder",
-                    fontSize: 15,
-                  },
-                  legend: {
-                    display: false,
-                    position: this.props.legendPosition,
-                  },
-                  layout: {
-                    padding: {
-                      left: 0,
-                      right: 0,
-                      top: 0,
-                      bottom: 0,
-                    },
-                  },
-                  scales: {
-                    yAxes: [
-                      {
-                        ticks: {
-                          beginAtZero: true,
-                        },
-                      },
-                    ],
-                  },
-                }}
-              />
-            </div>
-          </div>
-        </GridLayout>
+        </div>
       </div>
     );
   }
