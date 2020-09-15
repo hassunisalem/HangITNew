@@ -386,7 +386,7 @@ class Chart extends Component {
     venue
   ) {
     var URL =
-      "https://k7mb52gfg0.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_1&venueId=" +
+      "https://k7mb52gfg0.execute-api.eu-central-1.amazonaws.com/dev?customerId=Customer_1&action=gender&venueId=" +
       venue +
       "&timeStampStart=" +
       startDate +
@@ -585,7 +585,7 @@ class Chart extends Component {
   };
 
   getAgeDistChart = () => {
-    const data = this.state.visitingUsers;
+    const data = this.state.ageDist;
     if (data.datasets) {
       let colors = ["rgba(217, 39, 39, 1)", "rgba(75,192,192,0.4)"];
       data.datasets.forEach((set, i) => {
@@ -794,115 +794,123 @@ class Chart extends Component {
         className="all charts"
         //  style={{ textAlign: "left", height: 300, width: 600 }}
       >
-        <Dropdown
-          value={selectedOption}
-          onChange={this._onSelect}
-          options={this.state.venues}
-        />
-        <br></br>
-        <ProgressBar
-          now={this.xProcentOfY(
-            this.state.visitingUsers.total,
-            this.state.capacity
-          )}
-        />
-        <br></br>
-        <DateRangePicker
-          startDate={this.state.startDate} // momentPropTypes.momentObj or null,
-          startDateId={"1"} // PropTypes.string.isRequired,
-          endDate={this.state.endDate} // momentPropTypes.momentObj or null,
-          endDateId={"2"} // PropTypes.string.isRequired,
-          onDatesChange={({ startDate, endDate }) =>
-            this.setState({ startDate, endDate })
-          } // PropTypes.func.isRequired,
-          focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
-          onFocusChange={(focusedInput) => this.setState({ focusedInput })} // PropTypes.func.isRequired,
-          isOutsideRange={() => false}
-        />
-        <br></br>
-        Tid Fra
-        <br></br>
-        <TimeField value={startTime} onChange={this.onStartTimeChange} />
-        <br></br>
-        Tid Til
-        <br></br>
-        <TimeField value={endTime} onChange={this.onEndTimeChange} />
-        <form onSubmit={this.handleSubmit}>
-          {/* <div className="field" style={{ width: "100px" }}>
-              <p className="control">
-                Dato fra
-                <input
-                  className="input"
-                  type="text"
-                  id="startDate"
-                  placeholder="YYY-MM-DD hh:mm:ss"
-                  value={this.state.startDate}
-                  onChange={this.onInputChange}
-                />
-              </p>
+        <Card className="card-chart">
+          <CardBody>
+            <div className="chart-area">
+              <Row>
+                <Col xs={12} md={4}>
+                  <Dropdown
+                    value={selectedOption}
+                    onChange={this._onSelect}
+                    options={this.state.venues}
+                  />
+                </Col>
+                <br></br>
+                <Col xs={12} md={2}>
+                  <ProgressBar
+                    now={this.xProcentOfY(
+                      this.state.visitingUsers.total,
+                      this.state.capacity
+                    )}
+                  />
+                </Col>
+              </Row>
+              <br></br>
+
+              <Row>
+                <Col>
+                  <DateRangePicker
+                    startDate={this.state.startDate} // momentPropTypes.momentObj or null,
+                    startDateId={"1"} // PropTypes.string.isRequired,
+                    endDate={this.state.endDate} // momentPropTypes.momentObj or null,
+                    endDateId={"2"} // PropTypes.string.isRequired,
+                    onDatesChange={({ startDate, endDate }) =>
+                      this.setState({ startDate, endDate })
+                    } // PropTypes.func.isRequired,
+                    focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+                    onFocusChange={(focusedInput) =>
+                      this.setState({ focusedInput })
+                    } // PropTypes.func.isRequired,
+                    isOutsideRange={() => false}
+                  />
+                </Col>
+                Tid Fra
+                <Col>
+                  <TimeField
+                    style={{ width: "50px" }}
+                    value={startTime}
+                    onChange={this.onStartTimeChange}
+                  />
+                </Col>
+                Tid Til
+                <Col>
+                  <TimeField
+                    style={{ width: "50px" }}
+                    value={endTime}
+                    onChange={this.onEndTimeChange}
+                  />
+                </Col>
+                Alder Fra
+                <Col>
+                  <div className="field" style={{ width: "100px" }}>
+                    <p className="control">
+                      <input
+                        className="input"
+                        type="text"
+                        id="alderFra"
+                        placeholder="Alder"
+                        value={this.state.alderFra}
+                        onChange={this.onInputChange}
+                      />
+                    </p>
+                  </div>
+                </Col>
+                Alder til
+                <Col>
+                  <div className="field" style={{ width: "100px" }}>
+                    <p className="control">
+                      <input
+                        className="input"
+                        type="text"
+                        id="alderTil"
+                        placeholder="Alder"
+                        value={this.state.alderTil}
+                        onChange={this.onInputChange}
+                      />
+                    </p>
+                  </div>
+                </Col>
+                Køn
+                <Col>
+                  <div className="field" style={{ width: "100px" }}>
+                    <p className="control">
+                      <input
+                        className="input"
+                        type="text"
+                        id="gender"
+                        placeholder="køn (M eller F)"
+                        value={this.state.gender}
+                        onChange={this.onInputChange}
+                      />
+                    </p>
+                  </div>
+                </Col>
+                <Col>
+                  <div className="field">
+                    <p className="control">
+                      <button
+                        onClick={this.handleSubmit}
+                        className="button is-success"
+                      >
+                        Hent Data
+                      </button>
+                    </p>
+                  </div>
+                </Col>
+              </Row>
             </div>
-            <div className="field" style={{ width: "100px" }}>
-              <p className="control">
-                Dato til
-                <input
-                  className="input"
-                  type="text"
-                  id="endDate"
-                  placeholder="YYY-MM-DD hh:mm:ss"
-                  value={this.state.endDate}
-                  onChange={this.onInputChange}
-                />
-              </p>
-            </div> */}
-
-          <div className="field" style={{ width: "100px" }}>
-            <p className="control">
-              Alder fra
-              <input
-                className="input"
-                type="text"
-                id="alderFra"
-                placeholder="Alder"
-                value={this.state.alderFra}
-                onChange={this.onInputChange}
-              />
-            </p>
-          </div>
-
-          <div className="field" style={{ width: "100px" }}>
-            <p className="control">
-              Alder til
-              <input
-                className="input"
-                type="text"
-                id="alderTil"
-                placeholder="Alder"
-                value={this.state.alderTil}
-                onChange={this.onInputChange}
-              />
-            </p>
-          </div>
-
-          <div className="field" style={{ width: "100px" }}>
-            <p className="control">
-              Køn
-              <input
-                className="input"
-                type="text"
-                id="gender"
-                placeholder="køn (M eller F)"
-                value={this.state.gender}
-                onChange={this.onInputChange}
-              />
-            </p>
-          </div>
-
-          <div className="field">
-            <p className="control">
-              <button className="button is-success">Hent Data</button>
-            </p>
-          </div>
-        </form>
+          </CardBody>
+        </Card>
         <br></br>
         <Row>
           <Col xs={12} md={4}>
@@ -950,6 +958,58 @@ class Chart extends Component {
                             },
                           },
                         ],
+                      },
+                    }}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+            {/* </div> */}
+          </Col>
+          <Col xs={12} md={4}>
+            {/* <div
+                        style={{
+                          position: "absolute",
+                          width: 250,
+                          height: 100,
+                          top: "290px",
+                          left: "780px",
+                        }}
+                      > */}
+            <Card className="card-chart">
+              <CardBody>
+                <div className="chart-area">
+                  <div
+                    style={{
+                      position: "absolute",
+                      width: 250,
+                      height: 100,
+                      top: "68px",
+                      left: "115px",
+                    }}
+                  >
+                    {this.state.visitingUsers.total}
+                  </div>
+                  <Doughnut
+                    data={this.getVisitingChart}
+                    options={{
+                      responsive: true,
+                      title: {
+                        display: this.props.displayTitle,
+                        text: "Nuværende Gæster",
+                        fontSize: 15,
+                      },
+                      legend: {
+                        display: false,
+                        position: this.props.legendPosition,
+                      },
+                      layout: {
+                        padding: {
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                        },
                       },
                     }}
                   />
@@ -1012,37 +1072,29 @@ class Chart extends Component {
             </Card>
             {/* </div> */}
           </Col>
-          <Col xs={12} md={4}>
-            {/* <div
-              style={{
-                position: "absolute",
-                width: 250,
-                height: 100,
-                top: "290px",
-                left: "780px",
-              }}
-            > */}
+        </Row>
+        <br></br>
+        <Row>
+          <Col xs={12} md={4} sm={{ size: 4, offset: 2 }}>
             <Card className="card-chart">
               <CardBody>
                 <div className="chart-area">
-                  <div
-                    style={{
-                      position: "absolute",
-                      width: 250,
-                      height: 100,
-                      top: "68px",
-                      left: "115px",
-                    }}
-                  >
-                    {this.state.visitingUsers.total}
-                  </div>
-                  <Doughnut
-                    data={this.getVisitingChart}
+                  {/* <div
+                style={{
+                  position: "absolute",
+                  width: 500,
+                  height: 400,
+                  top: "473px",
+                  left: "140px",
+                }}
+              > */}
+                  <Line
+                    data={this.getDurationChart}
                     options={{
                       responsive: true,
                       title: {
                         display: this.props.displayTitle,
-                        text: "Nuværende Gæster",
+                        text: "Besøg Tid",
                         fontSize: 15,
                       },
                       legend: {
@@ -1057,57 +1109,22 @@ class Chart extends Component {
                           bottom: 0,
                         },
                       },
+                      scales: {
+                        yAxes: [
+                          {
+                            ticks: {
+                              beginAtZero: true,
+                            },
+                          },
+                        ],
+                      },
                     }}
                   />
+                  {/* </div> */}
                 </div>
               </CardBody>
             </Card>
-            {/* </div> */}
-          </Col>
-        </Row>
-        <div
-          style={{
-            position: "absolute",
-            width: 500,
-            height: 400,
-            top: "473px",
-            left: "140px",
-          }}
-        >
-          <Line
-            data={this.getDurationChart}
-            options={{
-              responsive: true,
-              title: {
-                display: this.props.displayTitle,
-                text: "Besøg Tid",
-                fontSize: 15,
-              },
-              legend: {
-                display: false,
-                position: this.props.legendPosition,
-              },
-              layout: {
-                padding: {
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                },
-              },
-              scales: {
-                yAxes: [
-                  {
-                    ticks: {
-                      beginAtZero: true,
-                    },
-                  },
-                ],
-              },
-            }}
-          />
-        </div>
-        <div
+            {/* <div
           style={{
             height: 210,
             width: 210,
@@ -1115,50 +1132,51 @@ class Chart extends Component {
             top: "140px",
             left: "470px",
           }}
-        >
-          <div
-            style={{
-              width: 400,
-              height: 300,
-              position: "absolute",
-              top: "-50px",
-              left: "200px",
-            }}
-          >
-            <Bar
-              data={this.getPatronChart}
-              options={{
-                responsive: true,
-                title: {
-                  display: this.props.displayTitle,
-                  text: "Stamkunder",
-                  fontSize: 15,
-                },
-                legend: {
-                  display: false,
-                  position: this.props.legendPosition,
-                },
-                layout: {
-                  padding: {
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                  },
-                },
-                scales: {
-                  yAxes: [
-                    {
-                      ticks: {
-                        beginAtZero: true,
+        > */}
+          </Col>
+
+          <Col sm={{ size: 4, offset: 1 }}>
+            <Card className="card-chart">
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={this.getPatronChart}
+                    options={{
+                      responsive: true,
+                      title: {
+                        display: this.props.displayTitle,
+                        text: "Stamkunder",
+                        fontSize: 15,
                       },
-                    },
-                  ],
-                },
-              }}
-            />
-          </div>
-        </div>
+                      legend: {
+                        display: false,
+                        position: this.props.legendPosition,
+                      },
+                      layout: {
+                        padding: {
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                        },
+                      },
+                      scales: {
+                        yAxes: [
+                          {
+                            ticks: {
+                              beginAtZero: true,
+                            },
+                          },
+                        ],
+                      },
+                    }}
+                  />
+                  {/* </div> */}
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
       </div>
     );
   }
