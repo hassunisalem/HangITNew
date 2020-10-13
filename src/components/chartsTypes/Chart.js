@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Suspense } from "react";
 
 // import datas from "../DummyData.json";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
@@ -95,8 +95,74 @@ class Chart extends Component {
   };
 
   async componentWillMount() {
+    var idToken = store.getState().IdToken;
+
     this.onStartTimeChange = this.onStartTimeChange.bind(this);
     this.onEndTimeChange = this.onEndTimeChange.bind(this);
+
+    var datoFra = this.state.startDate.format("YYYY-MM-DD ");
+    var datoTil = this.state.endDate.format("YYYY-MM-DD ");
+    var tidFra = this.state.startTime;
+    var tidTil = this.state.endTime;
+    var alderFra = this.state.alderFra;
+    var alderTil = this.state.alderTil;
+    var gender = this.state.gender;
+    var venue = this.state.selectedOption.value;
+    <Suspense></Suspense>;
+
+    this.fetchVenues("Customer_1", idToken);
+    this.fetchVisitedUsers(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    this.fetchPatronUsers(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    this.fetchDurationOfStay(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    this.fetchVistingUsers(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    this.fetchAgeDist(
+      datoFra,
+      datoTil,
+      tidFra,
+      tidTil,
+      alderFra,
+      alderTil,
+      gender,
+      venue
+    );
+    /*
+   
 
     var datoFra = this.state.startDate.format("YYYY-MM-DD ");
     var datoTil = this.state.endDate.format("YYYY-MM-DD ");
@@ -149,6 +215,7 @@ class Chart extends Component {
       gender,
       venue
     );
+    */
   }
 
   // 2020-01-1%2022:23:00
@@ -191,7 +258,7 @@ class Chart extends Component {
     console.log(this.state.capacity);
   }
 
-  fetchVenues(customerId) {
+  fetchVenues(customerId, idToken) {
     var URL =
       "https://atvetw1fud.execute-api.eu-central-1.amazonaws.com/dev?customerId=" +
       customerId;
@@ -202,7 +269,7 @@ class Chart extends Component {
       headers: {
         // "Content-Type": "application/json",
         // "Access-Control-Allow-Origin": "http://localhost:3000/chart",
-        Authorization: store.getState().IdToken,
+        Authorization: idToken,
       },
       mode: "cors",
     })
@@ -765,12 +832,6 @@ class Chart extends Component {
     this.fetchCapacity(selectedOption.value);
   };
 
-  // setStartDate(date) {
-  //   this.setState({ startDate: date });
-
-  //   return "June 7, 2020 5:34 PM";
-  // }
-
   setStartDate(date) {
     this.setState({ startDate: date });
   }
@@ -780,27 +841,15 @@ class Chart extends Component {
   }
 
   render() {
-    // const classes = useStyles();
-    const selectedOption = this.state.venues;
-    const startTime = this.state.startTime;
-    const endTime = this.state.endTime;
-    // const layouts = [
-    //   { i: "a", x: 0, y: 0, w: 1, h: 2, static: true },
-    //   { i: "b", x: 1, y: 0, w: 6, h: 7, minW: 5, maxW: 30 },
-    //   { i: "c", x: 4, y: 0, w: 1, h: 2 },
-    // ];
     return (
-      <div
-        className="all charts"
-        //  style={{ textAlign: "left", height: 300, width: 600 }}
-      >
+      <div className="all charts">
         <Card className="card-chart">
           <CardBody>
             <div className="chart-area">
               <Row>
                 <Col xs={12} md={4}>
                   <Dropdown
-                    value={selectedOption}
+                    value={this.state.selectedOption}
                     onChange={this._onSelect}
                     options={this.state.venues}
                   />
@@ -838,7 +887,7 @@ class Chart extends Component {
                 <Col>
                   <TimeField
                     style={{ width: "50px" }}
-                    value={startTime}
+                    value={this.state.startTime}
                     onChange={this.onStartTimeChange}
                   />
                 </Col>
@@ -846,7 +895,7 @@ class Chart extends Component {
                 <Col>
                   <TimeField
                     style={{ width: "50px" }}
-                    value={endTime}
+                    value={this.state.endTime}
                     onChange={this.onEndTimeChange}
                   />
                 </Col>
