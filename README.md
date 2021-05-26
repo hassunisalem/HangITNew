@@ -10,7 +10,7 @@ The code, espacially in the file *Chart.js*, needs to be broken down into smalle
 The reason i choose showcase this version for *Get Louis* is, to demonstrate that i've written most of the code and implemented various libraries here myself. 
 
 
-# chart page demo
+# Chart page demo
 
 1. clone or fork the projekt and navigate to the root folder
 1. run 'npm i'
@@ -19,3 +19,4 @@ The reason i choose showcase this version for *Get Louis* is, to demonstrate tha
 	1. **UserName:** Demo
 	1. **Password:** Demo
 1. when logged in, the option "bruger data" will appear as new tab in the navgiation bar
+click it to view the chart page
