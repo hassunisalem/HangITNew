@@ -5,6 +5,10 @@ import { Bar, Doughnut, Line } from "react-chartjs-2";
 import store from "../../store";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import dashboardPanelChart from "../../variables/chart.js";
+
+import PanelHeader from "../PanelHeader/PanelHeader.js";
+
 // import { makeStyles } from "@material-ui/core/";
 // import { Grid, Paper } from "@material-ui/core/";
 
@@ -94,145 +98,27 @@ class Chart extends Component {
     },
   };
 
+  timeout(delay) {
+    return new Promise( res => setTimeout(res, delay) );
+}
+
   async componentWillMount() {
+
+    
+
     var idToken = store.getState().IdToken;
 
     this.onStartTimeChange = this.onStartTimeChange.bind(this);
     this.onEndTimeChange = this.onEndTimeChange.bind(this);
 
-    var datoFra = this.state.startDate.format("YYYY-MM-DD ");
-    var datoTil = this.state.endDate.format("YYYY-MM-DD ");
-    var tidFra = this.state.startTime;
-    var tidTil = this.state.endTime;
-    var alderFra = this.state.alderFra;
-    var alderTil = this.state.alderTil;
-    var gender = this.state.gender;
-    var venue = this.state.selectedOption.value;
-    <Suspense></Suspense>;
 
-    this.fetchVenues("Customer_1", idToken);
-    this.fetchVisitedUsers(
-      datoFra,
-      datoTil,
-      tidFra,
-      tidTil,
-      alderFra,
-      alderTil,
-      gender,
-      venue
-    );
-    this.fetchPatronUsers(
-      datoFra,
-      datoTil,
-      tidFra,
-      tidTil,
-      alderFra,
-      alderTil,
-      gender,
-      venue
-    );
-    this.fetchDurationOfStay(
-      datoFra,
-      datoTil,
-      tidFra,
-      tidTil,
-      alderFra,
-      alderTil,
-      gender,
-      venue
-    );
-    this.fetchVistingUsers(
-      datoFra,
-      datoTil,
-      tidFra,
-      tidTil,
-      alderFra,
-      alderTil,
-      gender,
-      venue
-    );
-    this.fetchAgeDist(
-      datoFra,
-      datoTil,
-      tidFra,
-      tidTil,
-      alderFra,
-      alderTil,
-      gender,
-      venue
-    );
-    /*
-   
+    await this.timeout(10);
+  this.handleSubmit();
 
-    var datoFra = this.state.startDate.format("YYYY-MM-DD ");
-    var datoTil = this.state.endDate.format("YYYY-MM-DD ");
-    var tidFra = this.state.startTime;
-    var tidTil = this.state.endTime;
-    var alderFra = this.state.alderFra;
-    var alderTil = this.state.alderTil;
-    var gender = this.state.gender;
-    var venue = this.state.selectedOption.value;
 
-    this.fetchCapacity(venue);
-    this.fetchVenues("Customer_1");
-    this.fetchVisitedUsers(
-      datoFra,
-      datoTil,
-      tidFra,
-      tidTil,
-      alderFra,
-      alderTil,
-      gender,
-      venue
-    );
-    this.fetchPatronUsers(
-      datoFra,
-      datoTil,
-      tidFra,
-      tidTil,
-      alderFra,
-      alderTil,
-      gender,
-      venue
-    );
-    this.fetchDurationOfStay(
-      datoFra,
-      datoTil,
-      tidFra,
-      tidTil,
-      alderFra,
-      alderTil,
-      gender,
-      venue
-    );
-    this.fetchVistingUsers(
-      datoFra,
-      datoTil,
-      tidFra,
-      tidTil,
-      alderFra,
-      alderTil,
-      gender,
-      venue
-    );
-    */
+
   }
 
-  // 2020-01-1%2022:23:00
-  // 2021-10-1%2023:23:00
-
-  /* var URL =
-      "https://a60ad7y7e0.execute-api.eu-central-1.amazonaws.com/test?customerId=Customer0&venueId=1&timeStampStart=" +
-      this.state.datoFra +
-      "&timeStampEnd= " +
-      this.state.datoTil +
-      "&action=delivery&ageEnd=" +
-      this.state.alderTil +
-      "&zipCodeStart=0000&zipCodeEnd=9000&gender=" +
-      this.state.gender +
-      "&ageStart=" +
-      this.state.alderFra;
- */
 
   fetchCapacity(venueId) {
     var URL =
@@ -258,18 +144,18 @@ class Chart extends Component {
     console.log(this.state.capacity);
   }
 
-  fetchVenues(customerId, idToken) {
+  fetchVenues(customerId) {
     var URL =
       "https://atvetw1fud.execute-api.eu-central-1.amazonaws.com/dev?customerId=" +
       customerId;
 
-    // console.log(URL);
+     console.log(URL);
 
     fetch(URL, {
       headers: {
         // "Content-Type": "application/json",
         // "Access-Control-Allow-Origin": "http://localhost:3000/chart",
-        Authorization: idToken,
+        Authorization: store.getState().IdToken,
       },
       mode: "cors",
     })
@@ -309,7 +195,7 @@ class Chart extends Component {
       "&ageStart=" +
       alderFra;
 
-    // console.log(URL);
+     console.log(URL);
 
     fetch(URL, {
       headers: {
@@ -362,7 +248,7 @@ class Chart extends Component {
       "&ageStart=" +
       alderFra;
 
-    // console.log(URL);
+     console.log(URL);
 
     fetch(URL, {
       headers: {
@@ -778,6 +664,7 @@ class Chart extends Component {
       gender,
       venue
     );
+    console.log("aye");
   };
   // "customerId = " + customerId + "&venueId= " + venueId + "&venueId= " + venueId;
 
@@ -787,7 +674,7 @@ class Chart extends Component {
   var venueId="23"
   var action="retrieval"
   var startTimeStamp="2020-01-30 21:27:00"
-  var endTimeStamp="2020-01-30 22:27:00"
+  var endTimeStamp="2020-01-30 22:27:00" 
   var age="20-28"
   var gender="M"
   var zipcode="2600-3000" 
@@ -828,7 +715,6 @@ class Chart extends Component {
   _onSelect = (selectedOption) => {
     this.setState({ selectedOption });
     //console.log(this.state.selectedOption.value);
-    this.handleSubmit();
     this.fetchCapacity(selectedOption.value);
   };
 
@@ -839,6 +725,8 @@ class Chart extends Component {
   setEndDate(date) {
     this.setState({ endDate: date });
   }
+
+
 
   render() {
     return (
@@ -916,18 +804,8 @@ class Chart extends Component {
                 </Col>
                 Alder til
                 <Col>
-                  <div className="field" style={{ width: "100px" }}>
-                    <p className="control">
-                      <input
-                        className="input"
-                        type="text"
-                        id="alderTil"
-                        placeholder="Alder"
-                        value={this.state.alderTil}
-                        onChange={this.onInputChange}
-                      />
-                    </p>
-                  </div>
+                 
+                 
                 </Col>
                 Køn
                 <Col>
@@ -961,6 +839,18 @@ class Chart extends Component {
           </CardBody>
         </Card>
         <br></br>
+
+
+            <PanelHeader
+     size="lg"
+     content={
+       <Bar
+         data={this.getVistedChart}
+         options={dashboardPanelChart.options}
+       />
+    
+     }
+   />
         <Row>
           <Col xs={12} md={4}>
             {/* <div
@@ -975,41 +865,10 @@ class Chart extends Component {
                 left: "660px",
               }}
             > */}
+
             <Card className="card-chart">
               <CardBody>
                 <div className="chart-area">
-                  <Bar
-                    data={this.getVistedChart}
-                    options={{
-                      responsive: true,
-                      title: {
-                        display: this.props.displayTitle,
-                        text: "Besøgte Gæster",
-                        fontSize: 15,
-                      },
-                      legend: {
-                        display: false,
-                        position: this.props.legendPosition,
-                      },
-                      layout: {
-                        padding: {
-                          left: 0,
-                          right: 0,
-                          top: 0,
-                          bottom: 0,
-                        },
-                      },
-                      scales: {
-                        yAxes: [
-                          {
-                            ticks: {
-                              beginAtZero: true,
-                            },
-                          },
-                        ],
-                      },
-                    }}
-                  />
                 </div>
               </CardBody>
             </Card>
